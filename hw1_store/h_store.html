@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Encrypted File Store</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1894.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 2.0px 0.0px; font: 14.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 2.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 2.0px 0.0px; font: 12.0px Helvetica}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Courier}
+    p.p5 {margin: 0.0px 0.0px 2.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    p.p6 {margin: 0.0px 0.0px 2.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
+    p.p7 {margin: 0.0px 0.0px 2.0px 0.0px; text-align: center; font: 14.0px Helvetica; color: #fb0207; -webkit-text-stroke: #000000}
+    li.li5 {margin: 0.0px 0.0px 2.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    span.s1 {font: 14.0px Courier}
+    span.s2 {-webkit-text-stroke: 0px #000000}
+    span.s3 {font-kerning: none; color: #000000}
+    span.s4 {text-decoration: underline ; font-kerning: none; color: #0000e9; -webkit-text-stroke: 0px #0000e9}
+    span.Apple-tab-span {white-space:pre}
+    ul.ul1 {list-style-type: disc}
+  </style>
+</head>
+<body>
+<p class="p1"><b>Encrypted File Store</b></p>
+<p class="p2"><br></p>
+<p class="p3">The goal of this assignment is to build an encrypted file store. The stored files are each encrypted; the archive as a whole is integrity-protected.</p>
+<p class="p3">Implement a command called <span class="s1">cstore</span>. The<span class="Apple-converted-space">  </span>command <i>must</i><span class="Apple-converted-space">  </span>accept only the following options:</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>cstore list archivename</p>
+<p class="p4"><span class="Apple-tab-span">	</span>cstore add [-p password] archivename file</p>
+<p class="p4"><span class="Apple-tab-span">	</span>cstore extract [-p password] archivename file</p>
+<p class="p4"><span class="Apple-tab-span">	</span>cstore delete [-p password] archivename file</p>
+<p class="p2"><br></p>
+<p class="p3">The command you build <i>must</i> be named <span class="s1">cstore</span>, and it <i>must</i> accept exactly this syntax.</p>
+<p class="p2"><br></p>
+<p class="p3">Multiple files may appear on each command. If no password is given, it should be read from the keyboard. Use of the <span class="s1">getpass() </span>library routine is encouraged but not required. (For reasons we'll discuss later in the semester, the <span class="s1">-p</span> option is<span class="Apple-converted-space">  </span>not particularly secure. However, it's useful for testing.)</p>
+<p class="p3">To convert a password to a cryptographic key, iteratively apply SHA2-256 at least 10,000 times. (Again, this isn't the best way. You may implement PBKDF2 if you wish, but it's not required and there's no extra credit.)</p>
+<p class="p3">The attacker's goal is to steal one of the files, or to corrupt the archive. Therefore, the files must be encrypted and the archive must be<span class="Apple-converted-space">  </span>integrity-protected. However, it must be possible to list the archive without supplying a password.</p>
+<p class="p5"><span class="s2">I suggest download AES and SHA2-256 source code from <a href="https://github.com/B-Con/crypto-algorithms">https://github.com/B-Con/crypto-algorithms</a> (by </span><span class="s3">Brad Conte (<a href="mailto:brad@bradconte.com"><span class="s4">brad@bradconte.com</span></a>))</span>, though you're welcome to use any other open source implementation you find. (If you do, document the location.) I've compiled and tested those files on Linux. If you use them:</p>
+<ul class="ul1">
+  <li class="li5">You may only use the AES key setup routine <span class="s1">aes_key_setup</span> and the ECB encrypt/decrypt routines (<span class="s1">aes_encrypt</span> and <span class="s1">aes_decrypt</span>)</li>
+  <li class="li5">The <span class="s1">aes.h</span> file is (skimpy) documentation of the parameters to each routine. You may find it useful to look at <span class="s1">aes_test.c</span> for sample calling sequences</li>
+  <li class="li5">If you need any other modes of operation, you must implement them yourselves</li>
+</ul>
+<p class="p5">Similarly, see <span class="s1">sha256.h</span> and <span class="s1">sha256_test.c</span> for how to use SHA2-256. The style—calling <span class="s1">sha256_init()</span> to initialize the state, using <span class="s1">sha256_update() </span>for each block of additional text to be hashed, and <span class="s1">sha256_final()</span> to produce the final output—is the way every cryptographic hash function I've seen operates.<span class="Apple-converted-space"> </span></p>
+<p class="p5">If you need cryptographically strong random bytes, read them from <span class="s1">/dev/urandom</span>. Note that since its output is constantly changing, you may see non-reproducible errors. You may, if you wish, build in some test scaffolding; if yo do, you must document it.</p>
+<p class="p5">You must submit:</p>
+<ul class="ul1">
+  <li class="li5">Source code</li>
+  <li class="li5">A single Makefile to compile everything. Typing 'make test' should run your tests</li>
+  <li class="li5">Test scripts to exercise everything. The graders may supply their own test data, too.</li>
+  <li class="li5">A <i>short</i> document explaining any design choices. You <i>must</i> explain which AES mode of operation you used and why. You must also explain how you have chosen to integrity-protect the archive</li>
+</ul>
+<p class="p5">The archive file format is up to you. Efficiency is not especially important.</p>
+<p class="p6"><br></p>
+<p class="p7"><i>And remember—since buggy code is often insecure code, there will be deductions for any bugs.</i></p>
+</body>
+</html>
