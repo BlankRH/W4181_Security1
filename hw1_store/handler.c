@@ -25,6 +25,8 @@ void list_handler(const char **argv) {
 }
 
 void init_handler(int argc, const char **argv) {
+
+    printf("Initializing Archive...\n");
     
     const char *password = get_pwd(argc, argv);
     int archiveidx;
@@ -43,17 +45,36 @@ void init_handler(int argc, const char **argv) {
         fprintf(stderr, "Archive Alraeady Exists\n");
         exit(0);
     }
-
+    
     Hash(password, key);
     mkdir(archive, 0777);
 
-    HMAC(key, archive, code);
-
     char cpath[BUF_SIZE];
     create_path(archive, CODE_PATH, cpath);
-    FILE *fp = fopen(cpath, "wb");
-    fwrite(code, 1, 32, fp);
-    fclose(fp);
+    FILE *cfp = fopen(cpath, "wb");
+
+    char mpath[BUF_SIZE];
+    create_path(archive, METADATA_PATH, mpath);
+    FILE *mfp = fopen(mpath, "wb");
+
+    struct dirent *dp = NULL;
+    DIR *d = opendir(archive);
+    if (d == NULL) {
+        fprintf(stderr, "opendir failed\n");
+        exit(1);
+    }
+    while((dp = readdir(d)) != NULL) {
+        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
+            continue;
+        fputs(dp->d_name, mfp);
+        fputs("\n", mfp);
+    }
+    fclose(mfp);
+
+    HMAC(key, archive, code);
+
+    fwrite(code, 1, 32, cfp);
+    fclose(cfp);
 }
 
 void add_handler(int argc, const char **argv) {
@@ -86,10 +107,17 @@ void add_handler(int argc, const char **argv) {
         strcpy(rpath, filename);
         create_path(archive, filename, wpath);
         if(access(wpath, F_OK) == 0) {
-            remove(wpath);
+            fprintf(stderr, "File %s Exists\n", filename);
+            continue;
         }
-        Encrypt(rpath, wpath, key);
-        fprintf(fp, "%s\n", filename);
+        if(access(rpath, F_OK) == 0) {
+            Encrypt(rpath, wpath, key);
+        } else {
+            FILE *tmp = fopen(wpath, "w");
+            fclose(tmp);
+        }
+        fputs(filename, fp);
+        fputs("\n", fp);
     }
 
     fclose(fp);
@@ -118,18 +146,31 @@ void extract_handler(int argc, const char **argv) {
 
     const char *archive = argv[archiveidx];
 
-    Validate(archive);
+    Validate(archive, key);
 
     for(int i=archiveidx+1; i<argc; i++) {
+        
         char rpath[BUF_SIZE];
         char wpath[BUF_SIZE];
-        strcpy(rpath, argv[i]);
-        create_path(archive, argv[i], wpath);
+        strcpy(wpath, argv[i]);
+        create_path(archive, argv[i], rpath);
         if(access(rpath, F_OK) == -1) {
-            fprintf(stderr, "Error: file not exist\n");
+            fprintf(stderr, "Error: file does not exist\n");
             exit(1);
         }
-        Decrypt(rpath, wpath, key);
+        if((!strncmp(argv[i], "hashcode.txt", 12)) || (!strncmp(argv[i], "metadata.txt", 12))) {
+            char buf[BUF_SIZE];
+            size_t read_size;
+            FILE *out = fopen(wpath, "wb");
+            FILE *in = fopen(rpath, "rb");
+            while(read_size = fread(buf, 1, BUF_SIZE, in)) {
+                fwrite(buf, 1, read_size, out);
+            }
+            fclose(out);
+            fclose(in);
+        } else {
+            Decrypt(rpath, wpath, key);
+        }
     }
 
 }
@@ -152,7 +193,7 @@ void delete_handler(int argc, const char **argv) {
 
     const char *archive = argv[archiveidx];
 
-    Validate(archive);
+    Validate(archive, key);
 
     for(int i=archiveidx+1; i<argc; i++) {
         char path[BUF_SIZE];
@@ -198,11 +239,7 @@ const char* get_pwd(const int argc, const char **argv) {
     if (strcmp(argv[2], "-p") != 0) {
         return NULL;
     } else {
-        if(argc < 6) {
-            param_error(argv[1]);
-        } else {
-            return argv[3];
-        }
+        return argv[3];
     }
 }
 

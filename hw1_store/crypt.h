@@ -20,13 +20,12 @@ void Encrypt(char *read_path, char *write_path, const BYTE key[]);
 
 void Decrypt(char *read_path, char *write_path, const BYTE key[]);
 
-void Validate();
+void Validate(const char *archive, BYTE key[]);
 
-void Hash();
+void Hash(const char text[], BYTE buf[]);
 
-void HMAC();
+void HMAC(BYTE key[], const char *archive, BYTE buf[]);
 
 void create_path(const char *archive, const char *filename, char *file_path);
-
 
 #endif

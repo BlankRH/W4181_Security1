@@ -10,7 +10,7 @@ void cmd_paraphase(int argc, const char **argv) {
             list_handler(argv);
         }
     } else if (strcmp(argv[1], "init") == 0) {
-        if (argc != 3) {
+        if (argc < 3 || argc > 5) {
             param_error("init");
         } else {
             init_handler(argc, argv);

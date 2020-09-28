@@ -54,7 +54,7 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
     fclose(out);
 }
 
-void Hash(char text[], BYTE buf[]) {
+void Hash(const char text[], BYTE buf[]) {
     SHA256_CTX ctx;
     sha256_init(&ctx);
     for (int i = 0; i < 100000; ++i)
@@ -62,15 +62,20 @@ void Hash(char text[], BYTE buf[]) {
 	sha256_final(&ctx, buf);
 }
 
-void HMAC(BYTE key[], char *archive, BYTE buf[]) {
+void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
     struct dirent *dp = NULL;
-    DIR *d = NULL;
     SHA256_CTX ctx;
+
+    DIR *d = opendir(archive);
+    if (d == NULL) {
+        fprintf(stderr, "opendir failed\n");
+        exit(1);
+    }
     
     sha256_init(&ctx);
     sha256_update(&ctx, key, SHA256_BLOCK_SIZE);
     while((dp = readdir(d)) != NULL) {
-        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
+        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2))||(!strncmp(dp->d_name, "hashcode.txt", 12)))
             continue;
         char filepath[BUF_SIZE];
         BYTE text[BUF_SIZE];
@@ -87,7 +92,7 @@ void HMAC(BYTE key[], char *archive, BYTE buf[]) {
     
 }
 
-void Validate(char *archive, BYTE key[]) {
+void Validate(const char *archive, BYTE key[]) {
     BYTE code1[SHA256_BLOCK_SIZE];
     BYTE code2[SHA256_BLOCK_SIZE];
 
