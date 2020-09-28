@@ -1,7 +1,14 @@
 #include "crypt.h"
 #include "sha256.h"
-#include "handler.h"
 #include "my_aes.h"
+
+static const char *RAND_FILE = "/dev/urandom";
+
+void create_path(const char *archive, const char *filename, char *file_path) {
+    strcpy(file_path, archive);
+    strcat(file_path, "/");
+    strcat(file_path, filename);
+}
 
 void Encrypt(char *read_path, char *write_path, const BYTE key[]) {
 
@@ -19,7 +26,7 @@ void Encrypt(char *read_path, char *write_path, const BYTE key[]) {
     aes_key_setup(key, key_schedule, KEY_SCHEDULE_LEN);
 
     // pkcs5 padding
-    aes_encrypt_cbc(in, out, key_schedule, KEY_SCHEDULE_LEN, iv);
+    my_aes_encrypt_cbc(in, out, key_schedule, KEY_SCHEDULE_LEN, iv);
 
     fclose(in);
     fclose(rand_fp);
@@ -41,13 +48,13 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
     fread(iv, 1, AES_BLOCK_SIZE, in);
 
     // pkcs5 padding
-    aes_decrypt_cbc(in, out, key_schedule, KEY_SCHEDULE_LEN, iv);
+    my_aes_decrypt_cbc(in, out, key_schedule, KEY_SCHEDULE_LEN, iv);
 
     fclose(in);
     fclose(out);
 }
 
-void Hash(BYTE text[], BYTE buf[]) {
+void Hash(char text[], BYTE buf[]) {
     SHA256_CTX ctx;
     sha256_init(&ctx);
     for (int i = 0; i < 100000; ++i)
@@ -61,7 +68,7 @@ void HMAC(BYTE key[], char *archive, BYTE buf[]) {
     SHA256_CTX ctx;
     
     sha256_init(&ctx);
-    sha256_update(&ctx, key, strlen(key));
+    sha256_update(&ctx, key, SHA256_BLOCK_SIZE);
     while((dp = readdir(d)) != NULL) {
         if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
             continue;
@@ -69,10 +76,12 @@ void HMAC(BYTE key[], char *archive, BYTE buf[]) {
         BYTE text[BUF_SIZE];
         create_path(archive, dp->d_name, filepath);
         FILE *fp = fopen(filepath, "rb");
-        while(fread(text, 1, BUF_SIZE, fp)) {
-            sha256_update(&ctx, text, strlen(text));
+        size_t tlen;
+        while(tlen = fread(text, 1, BUF_SIZE, fp)) {
+            sha256_update(&ctx, text, tlen);
             memset(text, 0, BUF_SIZE);
         }
+        fclose(fp);
     }
     sha256_final(&ctx, buf);
     
@@ -84,11 +93,12 @@ void Validate(char *archive, BYTE key[]) {
 
     HMAC(key, archive, code2);
     char mpath[BUF_SIZE];
-    create_path(archive, METADATA_PATH, mpath);
+    create_path(archive, CODE_PATH, mpath);
     FILE *fp = fopen(mpath, "rb");
     fread(code1, 1, SHA256_BLOCK_SIZE, fp);
+    fclose(fp);
     if(memcmp(code1, code2, 32) != 0) {
-        fprintf(2, "Authentication fail\n");
+        fprintf(stderr, "Authentication fail\n");
         exit(1);
     }
 }

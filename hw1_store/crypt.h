@@ -1,14 +1,18 @@
 #ifndef _INCLUDE_CRYPT_H_
 #define _INCLUDE_CRYPT_H_
 
-#include "sha256.h"
-#include "my_aes.h"
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+
+static const char *METADATA_PATH = "metadata.txt";
+static const char *CODE_PATH = "hashcode.txt";
 
 typedef unsigned char BYTE;            // 8-bit byte
 typedef unsigned int WORD;             // 32-bit word, change to "long" for 16-bit machines
-static const char *RAND_FILE = "/dev/urandom";
-const int KEY_SIZE = 32;
+
+static const int KEY_SIZE = 32;
 static const int KEY_SCHEDULE_LEN = 256;
 static const int BUF_SIZE = 1024;
 
@@ -21,6 +25,8 @@ void Validate();
 void Hash();
 
 void HMAC();
+
+void create_path(const char *archive, const char *filename, char *file_path);
 
 
 #endif

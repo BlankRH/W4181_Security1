@@ -1,5 +1,5 @@
-#include "cstore.h"
 #include "handler.h"
+#include "stdlib.h"
 
 void cmd_paraphase(int argc, const char **argv) {
 
@@ -8,6 +8,12 @@ void cmd_paraphase(int argc, const char **argv) {
             param_error("list");
         } else {
             list_handler(argv);
+        }
+    } else if (strcmp(argv[1], "init") == 0) {
+        if (argc != 3) {
+            param_error("init");
+        } else {
+            init_handler(argc, argv);
         }
     } else if (strcmp(argv[1], "add") == 0) {
         if(argc < 4) {
@@ -28,7 +34,7 @@ void cmd_paraphase(int argc, const char **argv) {
             extract_handler(argc, argv);
         }
     } else {
-        fprintf(2, "<Usage>: cstore <option> [-p password] <archivename> [files]\n");
+        fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> [files]\n");
         exit(1);
     }
 
@@ -36,8 +42,8 @@ void cmd_paraphase(int argc, const char **argv) {
 
 int main(int argc, const char* argv[]) {
 
-    if(argc < 4) {
-        fprintf(2, "<Usage>: cstore <option> [-p password] <archivename> <file>\n");
+    if(argc < 3) {
+        fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> <file>\n");
         exit(1);
     }
 
@@ -48,12 +54,3 @@ int main(int argc, const char* argv[]) {
 }
 
 
-void param_error(const char *option) {
-    if(option[0] == 'l') {
-        fprintf(2, "<Usage> cstore list <archievement> <files>\n");
-        exit();
-    } else {
-        fprintf(2, "<Usage> cstore %s [-p password] <archievement> <files>\n", option);
-        exit();
-    }
-}

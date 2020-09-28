@@ -1,78 +1,77 @@
 #include "handler.h"
 #include "crypt.h"
-
-
-
-void create_path(char *archive, char *filename, char *file_path) {
-    strcpy(file_path, archive);
-    strcat(file_path, "/");
-    strcat(file_path, filename);
-}
+#include "sha256.h"
 
 
 void list_handler(const char **argv) {
-    char *archive = argv[2];
+    const char *archive = argv[2];
     char file_path[BUF_SIZE];
+
+    if(access(archive, F_OK) != 0) {
+        fprintf(stderr, "archive does not exist\n");
+        exit(1);
+    }
 
     create_path(archive, METADATA_PATH, file_path);
 
-    FILE *fp = fopen(file_path, "r");
+    FILE *fp = fopen(file_path, "a+");
 
     char buf[BUF_SIZE];
-    printf("Printing filenames in archive...");
-    while(read(fp, buf, BUF_SIZE)) {
-        printf(buf);
+    printf("Printing filenames in archive...\n");
+    while(fgets(buf, BUF_SIZE, fp)) {
+        printf("%s", buf);
     }
-
+    fclose(fp);
 }
 
 void init_handler(int argc, const char **argv) {
-    char *archive = argv[2];
-    char *password = get_pwd(argc, argv);
+    
+    const char *password = get_pwd(argc, argv);
     int archiveidx;
     BYTE key[KEY_SIZE];
     BYTE code[SHA256_BLOCK_SIZE];
 
     if(password == NULL) {
-        archiveidx = 4;
+        archiveidx = 2;
         password = getpass("Enter password:");
     } else {
-        archiveidx = 2;
+        archiveidx = 4;
     }
+    const char *archive = argv[archiveidx];
+
     if(access(archive, F_OK) == 0) {
-        fprintf(2, "Archive Alraeady Exists");
+        fprintf(stderr, "Archive Alraeady Exists\n");
         exit(0);
     }
-    
+
     Hash(password, key);
     mkdir(archive, 0777);
 
     HMAC(key, archive, code);
 
-    char mpath[BUF_SIZE];
-    create_path(archive, METADATA_PATH, mpath);
-    FILE *fp = fopen(mpath, "wb");
-    fprintf(code, 1, 32, fp);
+    char cpath[BUF_SIZE];
+    create_path(archive, CODE_PATH, cpath);
+    FILE *fp = fopen(cpath, "wb");
+    fwrite(code, 1, 32, fp);
     fclose(fp);
 }
 
 void add_handler(int argc, const char **argv) {
-    char *archive;
-    char *password = get_pwd(argc, argv);
+    const char *password = get_pwd(argc, argv);
     int archiveidx;
     BYTE key[KEY_SIZE];
     BYTE code[SHA256_BLOCK_SIZE];
 
     if(password == NULL) {
-        archiveidx = 4;
+        archiveidx = 2;
         password = getpass("Enter password:");
     } else {
-        archiveidx = 2;
+        archiveidx = 4;
     }
 
     Hash(password, key);
 
-    archive = argv[archiveidx];
+    const char *archive = argv[archiveidx];
 
     Validate(archive, key);
 
@@ -83,7 +82,7 @@ void add_handler(int argc, const char **argv) {
     for(int i=archiveidx+1; i<argc; i++) {
         char rpath[BUF_SIZE];
         char wpath[BUF_SIZE];
-        char *filename = argv[i];
+        const char *filename = argv[i];
         strcpy(rpath, filename);
         create_path(archive, filename, wpath);
         if(access(wpath, F_OK) == 0) {
@@ -96,28 +95,28 @@ void add_handler(int argc, const char **argv) {
     fclose(fp);
     
     HMAC(key, archive, code);
-
-    FILE *newfp = fopen(mpath, "wb");
-    fprintf(code, 1, 32, newfp);
+    char cpath[BUF_SIZE];
+    create_path(archive, CODE_PATH, cpath);
+    FILE *newfp = fopen(cpath, "wb");
+    fwrite(code, 1, 32, newfp);
     fclose(newfp);
     
 }
 void extract_handler(int argc, const char **argv) {
-    char *archive;
-    char *password = get_pwd(argc, argv);
+    const char *password = get_pwd(argc, argv);
     int archiveidx;
-    char key[KEY_SIZE];
+    BYTE key[KEY_SIZE];
 
     if(password == NULL) {
-        archiveidx = 4;
+        archiveidx = 2;
         password = getpass("Enter password:");
     } else {
-        archiveidx = 2;
+        archiveidx = 4;
     }
 
-    generate_key(password, key);
+    Hash(password, key);
 
-    archive = argv[archiveidx];
+    const char *archive = argv[archiveidx];
 
     Validate(archive);
 
@@ -127,7 +126,7 @@ void extract_handler(int argc, const char **argv) {
         strcpy(rpath, argv[i]);
         create_path(archive, argv[i], wpath);
         if(access(rpath, F_OK) == -1) {
-            fprintf(2, "Error: file not exist");
+            fprintf(stderr, "Error: file not exist\n");
             exit(1);
         }
         Decrypt(rpath, wpath, key);
@@ -136,31 +135,31 @@ void extract_handler(int argc, const char **argv) {
 }
 void delete_handler(int argc, const char **argv) {
 
-    char *archive;
-    char *password = get_pwd(argc, argv);
+    
+    const char *password = get_pwd(argc, argv);
     int archiveidx;
     BYTE key[KEY_SIZE];
-    BYTE code[SHA256_BLOCK_SIZE];
+    
 
     if(password == NULL) {
-        archiveidx = 4;
+        archiveidx = 2;
         password = getpass("Enter password:");
     } else {
-        archiveidx = 2;
+        archiveidx = 4;
     }
 
-    generate_key(password, key);
+    Hash(password, key);
 
-    archive = argv[archiveidx];
+    const char *archive = argv[archiveidx];
 
     Validate(archive);
 
     for(int i=archiveidx+1; i<argc; i++) {
         char path[BUF_SIZE];
-        strcpy(path, argv[i]);
-        create_path(archive, argv[i], path);
+        const char *filename = argv[i];
+        create_path(archive, filename, path);
         if(access(path, F_OK) == -1) {
-            fprintf(2, "Error: file not exist");
+            fprintf(stderr, "Error: file not exist\n");
             exit(1);
         }
         remove(path);
@@ -172,17 +171,25 @@ void delete_handler(int argc, const char **argv) {
     FILE *fp = fopen(mpath, "w");
 
     struct dirent *dp = NULL;
-    DIR *d = NULL;
+    DIR *d = opendir(archive);
+    if (d == NULL) {
+        fprintf(stderr, "opendir failed\n");
+        exit(1);
+    }
     while((dp = readdir(d)) != NULL) {
         if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
             continue;
-        fprintf(mpath, "%s\n", dp->d_name);
+        fputs(dp->d_name, fp);
+        fputs("\n", fp);
     }
+    fclose(fp);
+
+    BYTE code[SHA256_BLOCK_SIZE];
 
     HMAC(key, archive, code);
 
     FILE *newfp = fopen(mpath, "wb");
-    fprintf(code, 1, 32, newfp);
+    fwrite(code, 1, 32, newfp);
     fclose(newfp);
 }
 
@@ -193,9 +200,19 @@ const char* get_pwd(const int argc, const char **argv) {
     } else {
         if(argc < 6) {
             param_error(argv[1]);
-            exit(1);
         } else {
             return argv[3];
         }
     }
+}
+
+void param_error(const char *option) {
+    if(option[0] == 'l') {
+        fprintf(stderr, "<Usage> cstore %s <archive>\n", option);
+    } else if(option[0] == 'i') {
+        fprintf(stderr, "<Usage> cstore %s [-p password] <archive>\n", option);
+    } else {
+        fprintf(stderr, "<Usage> cstore %s [-p password] <archive> <files>\n", option);
+    }
+    exit(1);
 }
