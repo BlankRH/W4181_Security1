@@ -47,26 +47,6 @@ int main(int argc, const char* argv[]) {
 
 }
 
-const char* get_pwd(const int argc, const char **argv) {
-    if (strcmp(argv[0], "-p") != 0) {
-        return NULL;
-    } else {
-        if(argc < 6) {
-            param_error(argv[1]);
-            exit(1);
-        } else {
-            return argv[3];
-        }
-    }
-}
-
-const char* get_archive_name(const char **params) {
-    return params[2];
-}
-
-const char** get_files_name(const char **params) {
-    return params[3];
-}
 
 void param_error(const char *option) {
     if(option[0] == 'l') {

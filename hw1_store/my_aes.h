@@ -26,19 +26,9 @@ void aes_decrypt(const BYTE in[],             // 16 bytes of ciphertext
 
 // END
 
-int aes_encrypt_cbc(const BYTE in[],          
-                    size_t in_len,            
-                    BYTE out[],               
-                    const WORD key[],         
-                    int keysize,              
-                    const BYTE iv[]);
+int aes_encrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const BYTE iv[]);
 
-int aes_encrypt_cbc_mac(const BYTE in[],      
-                        size_t in_len,        
-                        BYTE out[],           
-                        const WORD key[],     
-                        int keysize,          
-                        const BYTE iv[]);
+int aes_encrypt_cbc_mac(FILE *in, FILE *out, const WORD key[], int keysize, const BYTE iv[]);
 
 
 #endif
