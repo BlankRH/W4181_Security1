@@ -20,5 +20,9 @@ my_aes.o 	: aes.h
 
 .PHONY:clean
 clean:
-	$(RM) -rf $(C_OBJECTS) cstore ./test *.txt
+	$(RM) -rf $(C_OBJECTS) cstore ./test *.txt non.exist
 
+.PHONY: test
+test:
+	make all 
+	./test_script.sh
