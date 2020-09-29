@@ -31,7 +31,7 @@ void cmd_paraphase(int argc, const char **argv) {
         if(argc < 4) {
             param_error("delete");
         } else {
-            extract_handler(argc, argv);
+            delete_handler(argc, argv);
         }
     } else {
         fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> [files]\n");

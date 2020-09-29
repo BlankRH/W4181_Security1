@@ -35,6 +35,11 @@ void Encrypt(char *read_path, char *write_path, const BYTE key[]) {
 }
 
 void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
+
+    FILE *tmp_in = fopen(read_path, "rb");
+    fseek(tmp_in, 0, SEEK_END);
+    int in_size = ftell(tmp_in);
+    fclose(tmp_in);
     
     FILE *in = fopen(read_path, "rb");
     FILE *out = fopen(write_path, "wb");
@@ -42,13 +47,14 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
     WORD key_schedule[60];
 
     BYTE iv[AES_BLOCK_SIZE];
+    printf("Here");
     
     aes_key_setup(key, key_schedule, KEY_SCHEDULE_LEN);
 
     fread(iv, 1, AES_BLOCK_SIZE, in);
 
     // pkcs5 padding
-    my_aes_decrypt_cbc(in, out, key_schedule, KEY_SCHEDULE_LEN, iv);
+    my_aes_decrypt_cbc(in, in_size, out, key_schedule, KEY_SCHEDULE_LEN, iv);
 
     fclose(in);
     fclose(out);
@@ -105,5 +111,7 @@ void Validate(const char *archive, BYTE key[]) {
     if(memcmp(code1, code2, 32) != 0) {
         fprintf(stderr, "Authentication fail\n");
         exit(1);
+    } else {
+        printf("Integrity Check & Authentication Success\n");
     }
 }

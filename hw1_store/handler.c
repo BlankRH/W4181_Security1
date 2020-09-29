@@ -147,6 +147,7 @@ void extract_handler(int argc, const char **argv) {
     const char *archive = argv[archiveidx];
 
     Validate(archive, key);
+    
 
     for(int i=archiveidx+1; i<argc; i++) {
         
@@ -176,7 +177,6 @@ void extract_handler(int argc, const char **argv) {
 }
 void delete_handler(int argc, const char **argv) {
 
-    
     const char *password = get_pwd(argc, argv);
     int archiveidx;
     BYTE key[KEY_SIZE];
@@ -196,6 +196,7 @@ void delete_handler(int argc, const char **argv) {
     Validate(archive, key);
 
     for(int i=archiveidx+1; i<argc; i++) {
+        
         char path[BUF_SIZE];
         const char *filename = argv[i];
         create_path(archive, filename, path);
@@ -203,6 +204,7 @@ void delete_handler(int argc, const char **argv) {
             fprintf(stderr, "Error: file not exist\n");
             exit(1);
         }
+        printf("Removing file %s from archive %s...\n", filename, archive);
         remove(path);
     }
 
@@ -218,18 +220,21 @@ void delete_handler(int argc, const char **argv) {
         exit(1);
     }
     while((dp = readdir(d)) != NULL) {
-        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
+        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)) || (!strncmp(dp->d_name, "hashcode.txt", 12)))
             continue;
         fputs(dp->d_name, fp);
         fputs("\n", fp);
     }
+
     fclose(fp);
 
     BYTE code[SHA256_BLOCK_SIZE];
 
     HMAC(key, archive, code);
 
-    FILE *newfp = fopen(mpath, "wb");
+    char cpath[BUF_SIZE];
+    create_path(archive, CODE_PATH, cpath);
+    FILE *newfp = fopen(cpath, "wb");
     fwrite(code, 1, 32, newfp);
     fclose(newfp);
 }

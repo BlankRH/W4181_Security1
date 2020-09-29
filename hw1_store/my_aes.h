@@ -14,7 +14,7 @@ typedef unsigned int WORD;
 
 int my_aes_encrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const BYTE iv[]);
 
-int my_aes_decrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const BYTE iv[]);
+int my_aes_decrypt_cbc(FILE *in, int in_size, FILE *out, const WORD key[], int keysize, const BYTE iv[]);
 
 
 #endif

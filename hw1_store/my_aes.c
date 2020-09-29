@@ -28,6 +28,7 @@ int my_aes_encrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const
         memcpy(buf_iv, buf_out, AES_BLOCK_SIZE);
         fwrite(buf_out, 1, AES_BLOCK_SIZE, out);
     }
+    
     if (!pad) {
         memset(buf_in, AES_BLOCK_SIZE, AES_BLOCK_SIZE);
         xor(buf_iv, buf_in, AES_BLOCK_SIZE);
@@ -38,14 +39,30 @@ int my_aes_encrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const
     return 1;
 }
 
-int my_aes_decrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const BYTE iv[]) {
+int my_aes_decrypt_cbc(FILE *in, int in_size, FILE *out, const WORD key[], int keysize, const BYTE iv[]) {
     BYTE buf_in[AES_BLOCK_SIZE], buf_out[AES_BLOCK_SIZE], buf_iv[AES_BLOCK_SIZE];
 
     memcpy(buf_iv, iv, AES_BLOCK_SIZE);
+    
 
-    while(fread(buf_in, 1, AES_BLOCK_SIZE, in)) {
+    int byte_left = in_size - AES_BLOCK_SIZE;
+    size_t byte_read;
+
+    while(byte_read = fread(buf_in, 1, AES_BLOCK_SIZE, in)) {
+        if(byte_read != AES_BLOCK_SIZE) {
+            fprintf(stderr, "decrypt file reading error\n");
+            exit(1);
+        }
+        byte_left -= AES_BLOCK_SIZE;
+        
         aes_decrypt(buf_in, buf_out, key, keysize);
+        
         xor(buf_iv, buf_out, AES_BLOCK_SIZE);
+        
+        if(byte_left == 0) {
+            fwrite(buf_out, 1, AES_BLOCK_SIZE-buf_out[AES_BLOCK_SIZE - 1], out);
+            break;
+        }
         memcpy(buf_iv, buf_in, AES_BLOCK_SIZE);
         fwrite(buf_out, 1, AES_BLOCK_SIZE, out);
     }
