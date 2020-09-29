@@ -47,7 +47,6 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
     WORD key_schedule[60];
 
     BYTE iv[AES_BLOCK_SIZE];
-    printf("Here");
     
     aes_key_setup(key, key_schedule, KEY_SCHEDULE_LEN);
 

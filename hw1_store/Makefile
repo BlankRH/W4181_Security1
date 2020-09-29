@@ -20,5 +20,5 @@ my_aes.o 	: aes.h
 
 .PHONY:clean
 clean:
-	$(RM) -rf $(C_OBJECTS) cstore ./test
+	$(RM) -rf $(C_OBJECTS) cstore ./test *.txt
 
