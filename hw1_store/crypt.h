@@ -33,4 +33,6 @@ void create_path(const char *archive, const char *filename, char *file_path);
 
 int check_file(const char *file, BYTE flag);
 
+void renew_metadata(const char *archive);
+
 #endif

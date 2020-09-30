@@ -11,6 +11,8 @@ void list_handler(const char **argv) {
     if(!check_file(archive, 0x3))
         exit(1);
 
+    renew_metadata(archive);
+
     create_path(archive, METADATA_PATH, file_path);
 
     FILE *fp = fopen(file_path, "a+");
@@ -44,7 +46,7 @@ void init_handler(int argc, const char **argv) {
     for(int i=archiveidx; i<argc; i++) {
 
         archive = argv[i];
-        
+
         if(!check_file(archive, 0x2))
             continue;
         
@@ -61,8 +63,8 @@ void init_handler(int argc, const char **argv) {
         struct dirent *dp = NULL;
         DIR *d = opendir(archive);
         if (d == NULL) {
-            fprintf(stderr, "c opendir failed\n");
-            exit(1);
+            fprintf(stderr, "c opendir failed for archive %s\n\n", archive);
+            continue;
         }
         while((dp = readdir(d)) != NULL) {
             if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
@@ -71,6 +73,7 @@ void init_handler(int argc, const char **argv) {
             fputs("\n", mfp);
         }
         fclose(mfp);
+        closedir(d);
 
         BYTE code[SHA256_BLOCK_SIZE]; 
         HMAC(key, archive, code);
@@ -137,6 +140,7 @@ void add_handler(int argc, const char **argv) {
     fclose(newfp);
     
 }
+
 void extract_handler(int argc, const char **argv) {
     const char *archive = NULL;
     const char *password = get_pwd(argc, argv, &archive);
@@ -184,6 +188,7 @@ void extract_handler(int argc, const char **argv) {
     }
 
 }
+
 void delete_handler(int argc, const char **argv) {
 
     const char *archive = NULL;
@@ -218,25 +223,7 @@ void delete_handler(int argc, const char **argv) {
         remove(path);
     }
 
-    char mpath[BUF_SIZE];
-    create_path(archive, METADATA_PATH, mpath);
-    remove(mpath);
-    FILE *fp = fopen(mpath, "w");
-
-    struct dirent *dp = NULL;
-    DIR *d = opendir(archive);
-    if (d == NULL) {
-        fprintf(stderr, "c opendir failed\n");
-        exit(1);
-    }
-    while((dp = readdir(d)) != NULL) {
-        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
-            continue;
-        fputs(dp->d_name, fp);
-        fputs("\n", fp);
-    }
-
-    fclose(fp);
+    renew_metadata(archive);
 
     BYTE code[SHA256_BLOCK_SIZE];
 
@@ -262,11 +249,11 @@ const char* get_pwd(const int argc, const char **argv, const char **archive) {
 
 void param_error(const char *option) {
     if(option[0] == 'l') {
-        fprintf(stderr, "<Usage> cstore %s <archive>\n", option);
+        fprintf(stderr, "<Usage> cstore %s <archive>\n\n", option);
     } else if(option[0] == 'i') {
-        fprintf(stderr, "<Usage> cstore %s [-p password] <archive>\n", option);
+        fprintf(stderr, "<Usage> cstore %s [-p password] <archive>\n\n", option);
     } else {
-        fprintf(stderr, "<Usage> cstore %s [-p password] <archive> <files>\n", option);
+        fprintf(stderr, "<Usage> cstore %s [-p password] <archive> <files>\n\n", option);
     }
     exit(1);
 }

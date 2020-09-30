@@ -50,7 +50,7 @@ int my_aes_decrypt_cbc(FILE *in, int in_size, FILE *out, const WORD key[], int k
 
     while(byte_read = fread(buf_in, 1, AES_BLOCK_SIZE, in)) {
         if(byte_read != AES_BLOCK_SIZE) {
-            fprintf(stderr, "decrypt file reading error\n");
+            fprintf(stderr, "decrypt file reading error\n\n");
             exit(1);
         }
         byte_left -= AES_BLOCK_SIZE;

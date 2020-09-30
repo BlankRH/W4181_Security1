@@ -11,7 +11,7 @@ void cmd_paraphase(int argc, const char **argv) {
             list_handler(argv);
         }
     } else if (strcmp(argv[1], "init") == 0) {
-        if (argc < 3 || argc > 5) {
+        if (argc < 3) {
             param_error("init");
         } else {
             printf("command: init\n");
@@ -21,7 +21,7 @@ void cmd_paraphase(int argc, const char **argv) {
         if(argc < 4) {
             param_error("add");
         } else {
-            printf("command: add\n");
+            printf("command: add\n\n");
             add_handler(argc, argv);
         }
     } else if (strcmp(argv[1], "extract") == 0) {
@@ -39,7 +39,7 @@ void cmd_paraphase(int argc, const char **argv) {
             delete_handler(argc, argv);
         }
     } else {
-        fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> [files]\n");
+        fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> [files]\n\n");
         exit(1);
     }
 
@@ -48,7 +48,7 @@ void cmd_paraphase(int argc, const char **argv) {
 int main(int argc, const char* argv[]) {
 
     if(argc < 3) {
-        fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> <file>\n");
+        fprintf(stderr, "<Usage>: cstore <option> [-p password] <archivename> <file>\n\n");
         exit(1);
     }
 

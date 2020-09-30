@@ -80,7 +80,7 @@ void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
 
     DIR *d = opendir(archive);
     if (d == NULL) {
-        fprintf(stderr, "opendir failed\n");
+        fprintf(stderr, "c opendir failed\n\n");
         exit(1);
     }
     
@@ -92,6 +92,7 @@ void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
         char filepath[BUF_SIZE];
         BYTE text[BUF_SIZE];
         create_path(archive, dp->d_name, filepath);
+        sha256_update(&ctx, filepath, strlen(filepath));
         FILE *fp = fopen(filepath, "rb");
         size_t tlen;
         while(tlen = fread(text, 1, BUF_SIZE, fp)) {
@@ -100,6 +101,7 @@ void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
         }
         fclose(fp);
     }
+    closedir(d);
     sha256_final(&ctx, buf);
 
     printf("New Hashcode Generated\n");
@@ -110,9 +112,11 @@ void Validate(const char *archive, BYTE key[]) {
     printf("Validating...\n");
 
     if(access(archive, F_OK) != 0) {
-        fprintf(stderr, "archive does not exist\n");
+        fprintf(stderr, "archive does not exist\n\n");
         exit(1);
     }
+
+    renew_metadata(archive);
 
     BYTE code1[SHA256_BLOCK_SIZE];
     BYTE code2[SHA256_BLOCK_SIZE];
@@ -122,7 +126,7 @@ void Validate(const char *archive, BYTE key[]) {
     char mpath[BUF_SIZE];
     create_path(archive, CODE_PATH, mpath);
     if(!check_file(mpath, 0x01)) {
-        fprintf(stderr, "Authentication fail\n");
+        fprintf(stderr, "Authentication fail\n\n");
         exit(1);
     }
     FILE *fp = fopen(mpath, "rb");
@@ -132,7 +136,7 @@ void Validate(const char *archive, BYTE key[]) {
     fclose(fp);
 
     if(memcmp(code1, code2, 32) != 0) {
-        fprintf(stderr, "Authentication fail\n");
+        fprintf(stderr, "Authentication fail\n\n");
         exit(1);
     } else {
         printf("Integrity Check & Authentication Success\n");
@@ -151,27 +155,55 @@ int check_file(const char *file, BYTE flag) {
 
     if(exist == -1) {
         if(flag & 0x01) {
-            fprintf(stderr, "%s Does Not Exist\n", file);
+            fprintf(stderr, "%s Does Not Exist\n\n", file);
             return 0;
         }
     } else if (exist == 0) {
         if(!(flag & 0x01)) {
-            fprintf(stderr, "%s Already Exists\n", file);
+            fprintf(stderr, "%s Already Exists\n\n", file);
             return 0;
         } else {
-            if(S_ISDIR(st.st_mode) && !(flag & 0x03)) {
-                fprintf(stderr, "%s Is Archive\n", file);
+            if(S_ISDIR(st.st_mode) && !(flag & 0x02)) {
+                fprintf(stderr, "%s Is Archive\n\n", file);
                 return 0;
             }
-            if(!S_ISDIR(st.st_mode) && !(flag & 0x01)) {
-                fprintf(stderr, "%s Is File\n", file);
+            if(!S_ISDIR(st.st_mode) && (flag & 0x02)) {
+                fprintf(stderr, "%s Is File\n\n", file);
                 return 0;
             }
         }
     } else {
-        fprintf(stderr, "c access function error\n");
+        fprintf(stderr, "c access function error\n\n");
         exit(1);
     }
     return 1;
 
+}
+
+void renew_metadata(const char *archive) {
+
+    char mpath[BUF_SIZE];
+    create_path(archive, METADATA_PATH, mpath);
+    if(!check_file(mpath, 0x1)) {
+        fprintf(stderr, "Missing metadata.txt\n\n");
+        exit(1);
+    }
+    remove(mpath);
+    FILE *fp = fopen(mpath, "w");
+
+    struct dirent *dp = NULL;
+    DIR *d = opendir(archive);
+    if (d == NULL) {
+        fprintf(stderr, "c opendir failed\n\n");
+        exit(1);
+    }
+    while((dp = readdir(d)) != NULL) {
+        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
+            continue;
+        fputs(dp->d_name, fp);
+        fputs("\n", fp);
+    }
+
+    closedir(d);
+    fclose(fp);
 }
