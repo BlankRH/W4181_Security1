@@ -92,7 +92,7 @@ void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
         char filepath[BUF_SIZE];
         BYTE text[BUF_SIZE];
         create_path(archive, dp->d_name, filepath);
-        sha256_update(&ctx, filepath, strlen(filepath));
+        sha256_update(&ctx, dp->d_name, strlen(dp->d_name));
         FILE *fp = fopen(filepath, "rb");
         size_t tlen;
         while(tlen = fread(text, 1, BUF_SIZE, fp)) {

@@ -1,0 +1,18 @@
+basic function implemented
+default test path: the parent directory of test archive
+
+example:
+cstore init [-p password] archive1 archive2 ...
+cstore list archive
+cstore add [-p password] archive file1 file2 ...
+cstore extract [-p password] archive file1 file2 ...
+cstore delete [-p password] archive file1 file2 ...
+
+additional function description:
+init is the only option that supports operating multiple archive at a time; the archives created in the sameline has the same password
+metadata.txt and hashcode.txt are plaintext files
+metadata.txt contains filenames in the archive
+hashcode contains the HMAC code
+
+algorithm description:
+I implemented AES-CBC in my_aes.
