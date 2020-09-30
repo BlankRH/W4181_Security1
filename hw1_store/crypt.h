@@ -3,6 +3,9 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <dirent.h>
 
@@ -27,5 +30,7 @@ void Hash(const char text[], BYTE buf[]);
 void HMAC(BYTE key[], const char *archive, BYTE buf[]);
 
 void create_path(const char *archive, const char *filename, char *file_path);
+
+int check_file(const char *file, BYTE flag);
 
 #endif

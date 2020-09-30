@@ -12,6 +12,8 @@ void create_path(const char *archive, const char *filename, char *file_path) {
 
 void Encrypt(char *read_path, char *write_path, const BYTE key[]) {
 
+    printf("Encrypting...\n");
+
     FILE *in = fopen(read_path, "rb");
     FILE *rand_fp = fopen(RAND_FILE, "rb");
     FILE *out = fopen(write_path, "wb");
@@ -32,10 +34,12 @@ void Encrypt(char *read_path, char *write_path, const BYTE key[]) {
     fclose(rand_fp);
     fclose(out);
 
+    printf("Encryption Finished\n");
 }
 
 void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
 
+    printf("Decrypting...\n");
     FILE *tmp_in = fopen(read_path, "rb");
     fseek(tmp_in, 0, SEEK_END);
     int in_size = ftell(tmp_in);
@@ -57,6 +61,8 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
 
     fclose(in);
     fclose(out);
+
+    printf("Decryption Finished\n");
 }
 
 void Hash(const char text[], BYTE buf[]) {
@@ -68,6 +74,7 @@ void Hash(const char text[], BYTE buf[]) {
 }
 
 void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
+    printf("Generating new hashcode...\n");
     struct dirent *dp = NULL;
     SHA256_CTX ctx;
 
@@ -94,23 +101,77 @@ void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
         fclose(fp);
     }
     sha256_final(&ctx, buf);
+
+    printf("New Hashcode Generated\n");
     
 }
 
 void Validate(const char *archive, BYTE key[]) {
+    printf("Validating...\n");
+
+    if(access(archive, F_OK) != 0) {
+        fprintf(stderr, "archive does not exist\n");
+        exit(1);
+    }
+
     BYTE code1[SHA256_BLOCK_SIZE];
     BYTE code2[SHA256_BLOCK_SIZE];
 
     HMAC(key, archive, code2);
+
     char mpath[BUF_SIZE];
     create_path(archive, CODE_PATH, mpath);
+    if(!check_file(mpath, 0x01)) {
+        fprintf(stderr, "Authentication fail\n");
+        exit(1);
+    }
     FILE *fp = fopen(mpath, "rb");
+    
+
     fread(code1, 1, SHA256_BLOCK_SIZE, fp);
     fclose(fp);
+
     if(memcmp(code1, code2, 32) != 0) {
         fprintf(stderr, "Authentication fail\n");
         exit(1);
     } else {
         printf("Integrity Check & Authentication Success\n");
     }
+
+    printf("Validation Finished\n");
+}
+
+int check_file(const char *file, BYTE flag) {
+    // flag:
+    // bit 0: existence
+    // bit 1: 0file / 1archive
+    struct stat st;
+    stat(file, &st);
+    int exist = access(file, F_OK);
+
+    if(exist == -1) {
+        if(flag & 0x01) {
+            fprintf(stderr, "%s Does Not Exist\n", file);
+            return 0;
+        }
+    } else if (exist == 0) {
+        if(!(flag & 0x01)) {
+            fprintf(stderr, "%s Already Exists\n", file);
+            return 0;
+        } else {
+            if(S_ISDIR(st.st_mode) && !(flag & 0x03)) {
+                fprintf(stderr, "%s Is Archive\n", file);
+                return 0;
+            }
+            if(!S_ISDIR(st.st_mode) && !(flag & 0x01)) {
+                fprintf(stderr, "%s Is File\n", file);
+                return 0;
+            }
+        }
+    } else {
+        fprintf(stderr, "c access function error\n");
+        exit(1);
+    }
+    return 1;
+
 }
