@@ -21,7 +21,7 @@ void cmd_paraphase(int argc, const char **argv) {
         if(argc < 4) {
             param_error("add");
         } else {
-            printf("command: add\n\n");
+            printf("command: add\n");
             add_handler(argc, argv);
         }
     } else if (strcmp(argv[1], "extract") == 0) {
