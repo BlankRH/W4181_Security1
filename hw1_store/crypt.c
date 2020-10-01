@@ -65,10 +65,10 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]) {
     printf("Decryption Finished\n");
 }
 
-void Hash(const char text[], BYTE buf[]) {
+void Hash(const char text[], BYTE buf[], int iter_time) {
     SHA256_CTX ctx;
     sha256_init(&ctx);
-    for (int i = 0; i < 100000; ++i)
+    for (int i = 0; i < iter_time; ++i)
 	   sha256_update(&ctx, text, strlen(text));
 	sha256_final(&ctx, buf);
 }

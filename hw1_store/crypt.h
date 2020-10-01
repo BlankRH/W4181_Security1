@@ -25,7 +25,7 @@ void Decrypt(char *read_path, char *write_path, const BYTE key[]);
 
 void Validate(const char *archive, BYTE key[]);
 
-void Hash(const char text[], BYTE buf[]);
+void Hash(const char text[], BYTE buf[], int iter_time);
 
 void HMAC(BYTE key[], const char *archive, BYTE buf[]);
 

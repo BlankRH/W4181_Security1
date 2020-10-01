@@ -40,8 +40,8 @@ void init_handler(int argc, const char **argv) {
         archiveidx = 4;
     }
 
-    BYTE key[KEY_SIZE];
-    Hash(password, key);
+    BYTE hash_key[KEY_SIZE];
+    Hash(password, hash_key, 200000);
 
     for(int i=archiveidx; i<argc; i++) {
 
@@ -76,7 +76,7 @@ void init_handler(int argc, const char **argv) {
         closedir(d);
 
         BYTE code[SHA256_BLOCK_SIZE]; 
-        HMAC(key, archive, code);
+        HMAC(hash_key, archive, code);
 
         fwrite(code, 1, 32, cfp);
         fclose(cfp);
@@ -99,11 +99,12 @@ void add_handler(int argc, const char **argv) {
         archiveidx = 4;
     }
 
-    BYTE key[KEY_SIZE];
+    BYTE hash_key[KEY_SIZE], crypt_key[KEY_SIZE];
 
-    Hash(password, key);
+    Hash(password, hash_key, 200000);
+    Hash(password, crypt_key, 100000);
 
-    Validate(archive, key);
+    Validate(archive, hash_key);
 
     char mpath[BUF_SIZE];
     create_path(archive, METADATA_PATH, mpath);
@@ -121,7 +122,7 @@ void add_handler(int argc, const char **argv) {
             continue;
         }
         if(access(rpath, F_OK) == 0) {
-            Encrypt(rpath, wpath, key);
+            Encrypt(rpath, wpath, crypt_key);
         } else {
             FILE *tmp = fopen(wpath, "w");
             fclose(tmp);
@@ -132,7 +133,7 @@ void add_handler(int argc, const char **argv) {
 
     fclose(fp);
     
-    HMAC(key, archive, code);
+    HMAC(hash_key, archive, code);
     char cpath[BUF_SIZE];
     create_path(archive, CODE_PATH, cpath);
     FILE *newfp = fopen(cpath, "wb");
@@ -157,11 +158,12 @@ void extract_handler(int argc, const char **argv) {
         archiveidx = 4;
     }
 
-    BYTE key[KEY_SIZE];
+    BYTE hash_key[KEY_SIZE], crypt_key[KEY_SIZE];
 
-    Hash(password, key);
+    Hash(password, hash_key, 200000);
+    Hash(password, crypt_key, 100000);
 
-    Validate(archive, key);
+    Validate(archive, hash_key);
 
     for(int i=archiveidx+1; i<argc; i++) {
         
@@ -183,7 +185,7 @@ void extract_handler(int argc, const char **argv) {
             fclose(out);
             fclose(in);
         } else {
-            Decrypt(rpath, wpath, key);
+            Decrypt(rpath, wpath, crypt_key);
         }
     }
 
@@ -205,11 +207,11 @@ void delete_handler(int argc, const char **argv) {
         archiveidx = 4;
     }
 
-    BYTE key[KEY_SIZE];
+    BYTE hash_key[KEY_SIZE];
 
-    Hash(password, key);
+    Hash(password, hash_key, 200000);
 
-    Validate(archive, key);
+    Validate(archive, hash_key);
 
     for(int i=archiveidx+1; i<argc; i++) {
         
@@ -227,7 +229,7 @@ void delete_handler(int argc, const char **argv) {
 
     BYTE code[SHA256_BLOCK_SIZE];
 
-    HMAC(key, archive, code);
+    HMAC(hash_key, archive, code);
 
     char cpath[BUF_SIZE];
     create_path(archive, CODE_PATH, cpath);

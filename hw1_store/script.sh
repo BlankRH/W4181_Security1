@@ -13,7 +13,7 @@ cstore extract -p pwd test0 test_content.txt non.exist >> test_log.txt
 
 cstore delete -p pwd test0 test_content.txt non.exist >> test_log.txt
 
-cstore add -p pwd test0 test_content.txt non.exist
+cstore add -p pwd test0 test_content.txt non.exist >> test_log.txt
 
 echo
 echo "********************"
@@ -65,7 +65,7 @@ echo
 echo "Testing missing important files"
 rm -f ./test3/metadata.txt
 cstore extract -p pwd test3 hashcode.txt >> test_log.txt
-rm -f ./test3/hashcode.txt
+rm -f ./test4/hashcode.txt
 cstore extract -p pwd test4 metadata.txt >> test_log.txt
 
 echo
