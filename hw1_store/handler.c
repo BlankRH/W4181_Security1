@@ -106,10 +106,6 @@ void add_handler(int argc, const char **argv) {
 
     Validate(archive, hash_key);
 
-    char mpath[BUF_SIZE];
-    create_path(archive, METADATA_PATH, mpath);
-    FILE *fp = fopen(mpath, "a");
-
     BYTE code[SHA256_BLOCK_SIZE];
 
     for(int i=archiveidx+1; i<argc; i++) {
@@ -127,13 +123,12 @@ void add_handler(int argc, const char **argv) {
             FILE *tmp = fopen(wpath, "w");
             fclose(tmp);
         }
-        fputs(filename, fp);
-        fputs("\n", fp);
     }
 
-    fclose(fp);
+    renew_metadata(archive);
     
     HMAC(hash_key, archive, code);
+
     char cpath[BUF_SIZE];
     create_path(archive, CODE_PATH, cpath);
     FILE *newfp = fopen(cpath, "wb");

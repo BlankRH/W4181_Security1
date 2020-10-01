@@ -74,9 +74,9 @@ void Hash(const char text[], BYTE buf[], int iter_time) {
 }
 
 void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
-    printf("Generating new hashcode...\n");
     struct dirent *dp = NULL;
     SHA256_CTX ctx;
+
 
     DIR *d = opendir(archive);
     if (d == NULL) {
@@ -136,7 +136,7 @@ void Validate(const char *archive, BYTE key[]) {
     fclose(fp);
 
     if(memcmp(code1, code2, 32) != 0) {
-        fprintf(stderr, "Authentication fail\n\n");
+        fprintf(stderr, "Authentication fail");
         exit(1);
     } else {
         printf("Integrity Check & Authentication Success\n");

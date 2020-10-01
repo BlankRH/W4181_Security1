@@ -1,0 +1,124 @@
+command: init
+Initializing Archive...
+New Hashcode Generated
+New Hashcode Generated
+New Hashcode Generated
+New Hashcode Generated
+New Hashcode Generated
+New Hashcode Generated
+New Hashcode Generated
+Done
+
+command: add
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Encrypting...
+Encryption Finished
+New Hashcode Generated
+Done
+
+command: list
+Printing filenames in archive...
+test_content.txt
+metadata.txt
+non.exist
+hashcode.txt
+Done
+
+command: extract
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Decrypting...
+Decryption Finished
+Decrypting...
+Decryption Finished
+Done
+
+command: delete
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Removing file test_content.txt from archive test0...
+Removing file non.exist from archive test0...
+New Hashcode Generated
+Done
+
+command: add
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Encrypting...
+Encryption Finished
+Encrypting...
+Encryption Finished
+New Hashcode Generated
+Done
+
+command: add
+command: extract
+command: delete
+command: add
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Encrypting...
+Encryption Finished
+Encrypting...
+Encryption Finished
+New Hashcode Generated
+Done
+
+command: extract
+Validating...
+New Hashcode Generated
+command: add
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Encrypting...
+Encryption Finished
+Encrypting...
+Encryption Finished
+New Hashcode Generated
+Done
+
+command: extract
+Validating...
+New Hashcode Generated
+command: add
+Validating...
+New Hashcode Generated
+command: extract
+Validating...
+New Hashcode Generated
+command: delete
+Validating...
+New Hashcode Generated
+command: extract
+Validating...
+command: extract
+Validating...
+New Hashcode Generated
+command: add
+Validating...
+New Hashcode Generated
+Integrity Check & Authentication Success
+Validation Finished
+Encrypting...
+Encryption Finished
+Encrypting...
+Encryption Finished
+New Hashcode Generated
+Done
+
+command: extract
+Validating...
+New Hashcode Generated
