@@ -1,4 +1,0 @@
-test_content.txt
-metadata.txt
-non.exist
-hashcode.txt

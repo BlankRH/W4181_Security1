@@ -1,4 +1,0 @@
-metadata.txt
-non.exist
-newname.txt
-hashcode.txt

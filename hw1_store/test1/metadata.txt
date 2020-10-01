@@ -1,3 +1,0 @@
-metadata.txt
-non.exist
-hashcode.txt
