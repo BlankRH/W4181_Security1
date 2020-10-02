@@ -169,11 +169,12 @@ void Validate(const char *archive, BYTE key[]) {
     BYTE code2[SHA256_BLOCK_SIZE];
 
     HMAC(key, archive, code2);
-
-    FILE *a = fopen("hashcode.txt", "wb");
+/*
+    FILE *a = fopen("wrong_hashcode.txt", "wb");
     fwrite(code2, 1, SHA256_BLOCK_SIZE, a);
     // printf("%s\n", code2);
     fclose(a);
+*/
 
     char mpath[BUF_SIZE];
     create_path(archive, CODE_PATH, mpath);
