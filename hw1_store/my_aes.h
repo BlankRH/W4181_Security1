@@ -16,5 +16,7 @@ int my_aes_encrypt_cbc(FILE *in, FILE *out, const WORD key[], int keysize, const
 
 int my_aes_decrypt_cbc(FILE *in, int in_size, FILE *out, const WORD key[], int keysize, const BYTE iv[]);
 
+void xor(const BYTE in[], BYTE out[], size_t len);
+
 
 #endif

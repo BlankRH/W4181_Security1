@@ -73,35 +73,82 @@ void Hash(const char text[], BYTE buf[], int iter_time) {
 	sha256_final(&ctx, buf);
 }
 
+void HMAC_file(BYTE key[], const char *filepath, BYTE buf[]) {
+    BYTE ipad[KEY_SIZE] = {0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 
+                            0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36};
+    BYTE opad[KEY_SIZE] = {0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 
+                            0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c};
+    SHA256_CTX ctx, ctxi;
+    BYTE si[SHA256_BLOCK_SIZE];
+    BYTE text[BUF_SIZE];
+    FILE *fp = fopen(filepath, "rb");
+    size_t tlen;
+
+    xor(key, ipad, KEY_SIZE);
+    xor(key, opad, KEY_SIZE);
+
+    sha256_init(&ctxi);
+    sha256_update(&ctxi, ipad, KEY_SIZE);
+
+    while(tlen = fread(text, 1, BUF_SIZE, fp)) {
+        sha256_update(&ctxi, text, tlen);
+        memset(text, 0, BUF_SIZE);
+    }
+    sha256_final(&ctxi, si);
+
+    fclose(fp);
+
+    sha256_init(&ctx);
+    sha256_update(&ctx, opad, KEY_SIZE);
+    sha256_update(&ctx, si, SHA256_BLOCK_SIZE);
+    sha256_final(&ctx, buf);
+
+}
+
 void HMAC(BYTE key[], const char *archive, BYTE buf[]) {
     struct dirent *dp = NULL;
-    SHA256_CTX ctx;
+    SHA256_CTX ctx, ctxi;
+    BYTE ipad[KEY_SIZE] = {0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 
+                            0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36};
+    BYTE opad[KEY_SIZE] = {0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 
+                            0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c};
 
-
+    BYTE si[SHA256_BLOCK_SIZE];
     DIR *d = opendir(archive);
     if (d == NULL) {
         fprintf(stderr, "c opendir failed\n\n");
         exit(1);
     }
-    
-    sha256_init(&ctx);
-    sha256_update(&ctx, key, SHA256_BLOCK_SIZE);
+
+    xor(key, ipad, KEY_SIZE);
+    xor(key, opad, KEY_SIZE);
+    sha256_init(&ctxi);
+    sha256_update(&ctxi, ipad, KEY_SIZE);
+
     while((dp = readdir(d)) != NULL) {
         if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2))||(!strncmp(dp->d_name, "hashcode.txt", 12)))
             continue;
         char filepath[BUF_SIZE];
         BYTE text[BUF_SIZE];
+        BYTE filemac[SHA256_BLOCK_SIZE];
         create_path(archive, dp->d_name, filepath);
-        sha256_update(&ctx, dp->d_name, strlen(dp->d_name));
+        sha256_update(&ctxi, dp->d_name, strlen(dp->d_name));
         FILE *fp = fopen(filepath, "rb");
         size_t tlen;
         while(tlen = fread(text, 1, BUF_SIZE, fp)) {
-            sha256_update(&ctx, text, tlen);
+            sha256_update(&ctxi, text, tlen);
             memset(text, 0, BUF_SIZE);
         }
         fclose(fp);
+        HMAC_file(key, filepath, filemac);
+        sha256_update(&ctxi, filemac, SHA256_BLOCK_SIZE);
     }
     closedir(d);
+    sha256_final(&ctxi, si);
+
+    sha256_init(&ctx);
+    sha256_update(&ctx, opad, KEY_SIZE);
+    sha256_update(&ctx, si, SHA256_BLOCK_SIZE);
     sha256_final(&ctx, buf);
 
     printf("New Hashcode Generated\n");
@@ -123,6 +170,11 @@ void Validate(const char *archive, BYTE key[]) {
 
     HMAC(key, archive, code2);
 
+    FILE *a = fopen("hashcode.txt", "wb");
+    fwrite(code2, 1, SHA256_BLOCK_SIZE, a);
+    // printf("%s\n", code2);
+    fclose(a);
+
     char mpath[BUF_SIZE];
     create_path(archive, CODE_PATH, mpath);
     if(!check_file(mpath, 0x01)) {
@@ -136,7 +188,7 @@ void Validate(const char *archive, BYTE key[]) {
     fclose(fp);
 
     if(memcmp(code1, code2, 32) != 0) {
-        fprintf(stderr, "Authentication fail");
+        fprintf(stderr, "Authentication fail\n\n");
         exit(1);
     } else {
         printf("Integrity Check & Authentication Success\n");

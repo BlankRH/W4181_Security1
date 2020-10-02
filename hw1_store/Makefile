@@ -12,7 +12,6 @@ LD_FLAGS =
  
 all: $(C_OBJECTS)
 	$(CC) -o cstore $(C_OBJECTS)
-	sudo mv cstore /bin/cstore
 
 cstore.o	: handler.h
 handler.o 	: handler.h crypt.h sha256.h
@@ -25,6 +24,4 @@ clean:
 
 .PHONY: test
 test:
-	make clean
-	make all 
 	./script.sh
