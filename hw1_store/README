@@ -58,3 +58,4 @@ test:
 the test script could be run by ./script.sh
 it contains running basic operation and other operations that may cause authentication failure
 *because the program will raise an error and exit if it could not finish the command, there would be a recipe error for make test
+all running info is printed to test_log.txt
