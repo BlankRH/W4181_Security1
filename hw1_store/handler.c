@@ -109,16 +109,16 @@ void add_handler(int argc, const char **argv) {
     BYTE code[SHA256_BLOCK_SIZE];
 
     for(int i=archiveidx+1; i<argc; i++) {
+        if(!strncmp(argv[i], "metadata.txt", 12) || !strncmp(argv[i], "hashcode.txt", 12)) {
+            printf("Nope :)\n");
+            continue;
+        }
         char rpath[BUF_SIZE];
         char wpath[BUF_SIZE];
         const char *filename = argv[i];
         strcpy(rpath, filename);
         create_path(archive, filename, wpath);
         if(!check_file(wpath, 0x00)) {
-            continue;
-        }
-        if(!strncmp(argv[i], "metadata.txt", 12) || !strncmp(argv[i], "hashcode.txt", 12)) {
-            printf("Nope :)\n");
             continue;
         }
         if(access(rpath, F_OK) == 0) {
@@ -226,7 +226,7 @@ void delete_handler(int argc, const char **argv) {
             printf("Nope :)\n");
         } else {
             printf("Removing file %s from archive %s...\n", filename, archive);
-        remove(path);
+            remove(path);
         }
     }
 

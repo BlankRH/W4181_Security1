@@ -44,6 +44,8 @@ if file does not exist in the target directory, delete will print an error to ST
 
 additional function description:
 if the target name is not of the correct type, the program will print an error to STDERR and exit
+add/delete CANNOT work on hashcode.txt and metadata.txt
+extract CANNOT work on hashcode.txt
 
 
 algorithm description:
