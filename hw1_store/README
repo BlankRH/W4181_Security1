@@ -48,8 +48,8 @@ if the target name is not of the correct type, the program will print an error t
 
 algorithm description:
 I implemented AES-CBC in my_aes for encryption. The encryption key is gained from hashing the password 1e5 times. I also used pkcs7 padding.
-HMAC is used for authentication. The HMAC key is gained from hashing the password 2e5 times. The result is stored in hashcode.txt. 
-Each time an authentication is needed, I generate a new hashcode based on the input password and content of the archive, and then compare it with hashcode.txt
+HMAC is used for authentication. The HMAC key is gained from hashing the password 2e5 times. The result from HMAC is stored in hashcode.txt. 
+Each time an authentication is needed, I do HMAC on the new input password and content of the archive, and then compare it with hashcode.txt
 HMAC(hash_key, file1name1 || file1content1 || HMAC(hash_key, file1content1) || filename2....)
 
 
