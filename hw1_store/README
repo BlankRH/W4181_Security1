@@ -21,7 +21,7 @@ example:
 command descriptions:
 
 .\cstore init [-p password] archive1 archive2 ...
-init should create one/multiple archives with same password. There should be 2 plaintext files in it: metadata.txt(contain filenames) and hashcode.txt(contain hashcode).
+init should create one/multiple archives with same password. There should be 2 plaintext files in it: metadata.txt(contain filenames).
 If the archive to be created already exists, the program will print an error to STDERR and exit
 
 .\cstore list archive

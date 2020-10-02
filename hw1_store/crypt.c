@@ -251,7 +251,7 @@ void renew_metadata(const char *archive) {
         exit(1);
     }
     while((dp = readdir(d)) != NULL) {
-        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
+        if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)) || (!strncmp(dp->d_name, "hashcode.txt", 12)))
             continue;
         fputs(dp->d_name, fp);
         fputs("\n", fp);

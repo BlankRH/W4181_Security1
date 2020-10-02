@@ -67,7 +67,7 @@ void init_handler(int argc, const char **argv) {
             continue;
         }
         while((dp = readdir(d)) != NULL) {
-            if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
+            if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)) || (!strncmp(dp->d_name, "hashcode.txt", 12)))
                 continue;
             fputs(dp->d_name, mfp);
             fputs("\n", mfp);
@@ -115,6 +115,10 @@ void add_handler(int argc, const char **argv) {
         strcpy(rpath, filename);
         create_path(archive, filename, wpath);
         if(!check_file(wpath, 0x00)) {
+            continue;
+        }
+        if(!strncmp(argv[i], "metadata.txt", 12) || !strncmp(argv[i], "hashcode.txt", 12)) {
+            printf("Nope :)\n");
             continue;
         }
         if(access(rpath, F_OK) == 0) {
@@ -169,7 +173,7 @@ void extract_handler(int argc, const char **argv) {
         create_path(archive, argv[i], rpath);
         if(!check_file(rpath, 0x1)) 
             continue;
-        if((!strncmp(argv[i], "hashcode.txt", 12)) || (!strncmp(argv[i], "metadata.txt", 12))) {
+        if(!strncmp(argv[i], "metadata.txt", 12)) {
             char buf[BUF_SIZE];
             size_t read_size;
             FILE *out = fopen(wpath, "wb");
@@ -179,6 +183,8 @@ void extract_handler(int argc, const char **argv) {
             }
             fclose(out);
             fclose(in);
+        } else if (!strncmp(argv[i], "hashcode.txt", 12)) {
+            printf("Nope :)\n");
         } else {
             Decrypt(rpath, wpath, crypt_key);
         }
@@ -216,8 +222,12 @@ void delete_handler(int argc, const char **argv) {
         if(!check_file(path, 0x1)) {
             continue;
         }
-        printf("Removing file %s from archive %s...\n", filename, archive);
+        if(!strncmp(argv[i], "metadata.txt", 12) || !strncmp(argv[i], "hashcode.txt", 12)) {
+            printf("Nope :)\n");
+        } else {
+            printf("Removing file %s from archive %s...\n", filename, archive);
         remove(path);
+        }
     }
 
     renew_metadata(archive);
