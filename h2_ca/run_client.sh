@@ -1,6 +1,10 @@
-cd $HOME/test/server
+#!/bin/bash
+
+cd $HOME/test/client
 
 openssl s_client -connect 127.0.0.1:4433 \
-    -cert certs/127.0.0.1.cert.pem \
+    -pass pass:secret4 \
+    -cert certs/client.cert.pem \
     -CAfile certs/ca-chain.cert.pem \
-    -key private/127.0.0.1.key.pem -showcerts
+    -state -debug \
+    -key private/client.key.pem -showcerts

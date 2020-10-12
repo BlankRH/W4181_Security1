@@ -22,10 +22,11 @@ chmod 400 intermediate/private/intermediate.key.pem
 
 openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$interpwd \
     -key intermediate/private/intermediate.key.pem \
-    -out intermediate/csr/intermediate.csr.pem
+    -out intermediate/csr/intermediate.csr.pem \
+    -subj "/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Intermediate CA"
 
 openssl ca -config openssl.cnf -extensions v3_intermediate_ca \
-        -passin=pass:$interpwd -days 3650 -notext -md sha256 \
+        -passin=pass:$rootpwd -days 3650 -notext -md sha256 \
         -in intermediate/csr/intermediate.csr.pem \
         -out intermediate/certs/intermediate.cert.pem
 

@@ -1,28 +1,27 @@
 #!/bin/bash
 
-passwd='secret'
-name='bob@example.com'
+echo hello > $testdir/file/sign.txt
 
 cd $testdir/ca
 
-openssl genrsa -aes256 -passout pass:$passwd \
-      -out intermediate/private/${name}.key.pem 2048
+openssl genrsa -aes256 -passout pass:$signpwd \
+    -out $testdir/file/private/sign.key.pem 4096
+chmod 400 $testdir/client/private/sign.key.pem
 
-chmod 400 intermediate/private/${name}.key.pem
+openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$signpwd \
+    -key $testdir/file/private/sign.key.pem \
+    -out intermediate/csr/sign.csr.pem \
+    -subj "/C=GB/ST=England/L=./O=sign/OU=certificate/CN=signature"
 
-openssl req -config intermediate/openssl.cnf -passin=pass:$passwd\
-        -key intermediate/private/${name}.key.pem \
-        -new -sha256 -out intermediate/csr/${name}.csr.pem
+openssl ca -config intermediate/openssl.cnf -extensions sign_cert \
+        -passin=pass:$interpwd -days 365 -notext -md sha256 \
+        -in intermediate/csr/sign.csr.pem \
+        -out intermediate/certs/sign.cert.pem
 
-openssl ca -config intermediate/openssl.cnf -passin=pass:$rootpwd \
-        -extensions server_cert -days 375 -notext -md sha256 \
-        -in intermediate/csr/${name}.csr.pem \
-        -out intermediate/certs/${name}.cert.pem
+openssl x509 -in intermediate/certs/sign.cert.pem -pubkey -out intermediate/sign.pub.pem
 
-chmod 444 intermediate/certs/${name}.cert.pem
+cp intermediate/certs/sign.cert.pem $testdir/file/certs/sign.cert.pem
 
-openssl x509 -noout -text \
-      -in intermediate/certs/${name}.cert.pem
+openssl dgst -sha256 -sign $testdir/file/private/sign.key.pem -passin=pass:$signpwd \
+    -out $testdir/file/sign.txt.sha256 $testdir/file/sign.txt
 
-openssl verify -CAfile intermediate/certs/ca-chain.cert.pem \
-      intermediate/certs/${name}.cert.pem
