@@ -21,4 +21,4 @@ openssl req -passin pass:$rootpwd -config openssl.cnf -key private/ca.key.pem \
 
 chmod 444 certs/ca.cert.pem
 
-openssl x509 -noout -text -in certs/ca.cert.pem
+#openssl x509 -noout -text -in certs/ca.cert.pem

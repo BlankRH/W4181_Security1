@@ -3,22 +3,24 @@
 testdir=$HOME/test
 export testdir
 
-rootpwd='secretpassword'
+rootpwd=$1
 export rootpwd
 
-interpwd='secretpassword'
+interpwd=$2
 export interpwd
 
-#rm -rf $testdir
+rm -rf $testdir
 
-#mkdir $testdir
-#cp root-config.txt $testdir/root-config.txt
-#cp intermediate-config.txt $testdir/intermediate-config.txt
+mkdir $testdir
 
-#./rootPair.sh
 
-#./interPair.sh
+cp root-config.txt $testdir/root-config.txt
+cp intermediate-config.txt $testdir/intermediate-config.txt
 
-# ./sign.sh
+./rootPair.sh
 
-./revoke.sh
+./interPair.sh
+
+./server.sh
+
+./client.sh
