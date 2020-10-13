@@ -1,5 +1,9 @@
 #!/bin/bash
 
+testdir=$HOME/test
+encryptpwd=$1
+interpwd=$2
+
 cd $testdir/ca
 echo atest > $testdir/file/test.txt
 

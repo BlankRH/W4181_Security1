@@ -16,7 +16,6 @@ clientpwd=$4
 export clientpwd
 
 signpwd=$5
-export signpwd
 
 encryptpwd=$6
 export encryptpwd
@@ -41,10 +40,10 @@ cp intermediate-config.txt $testdir/intermediate-config.txt
 
 ./interPair.sh
 
-./server.sh
+./server.sh 
 
 ./client.sh
 
-#./sign.sh
+./sign.sh signpwd
 
 #./encrypt.sh

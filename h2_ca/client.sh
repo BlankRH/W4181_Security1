@@ -19,6 +19,7 @@ openssl ca -config intermediate/openssl.cnf -passin=pass:$interpwd \
         -extensions usr_cert -days 375 -notext -md sha256 \
         -in intermediate/csr/${name}.csr.pem \
         -out intermediate/certs/${name}.cert.pem
+chmod 444 intermediate/certs/${name}.cert.pem
 
 cp intermediate/certs/ca-chain.cert.pem $testdir/client/certs
 cp intermediate/certs/${name}.cert.pem $testdir/client/certs

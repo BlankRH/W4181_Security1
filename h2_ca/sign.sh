@@ -1,12 +1,16 @@
 #!/bin/bash
 
+testdir=$HOME/test
+signpwd=$1
+interpwd=$2
+
 echo hello > $testdir/file/sign.txt
 
 cd $testdir/ca
 
 openssl genrsa -aes256 -passout pass:$signpwd \
     -out $testdir/file/private/sign.key.pem 4096
-chmod 400 $testdir/client/private/sign.key.pem
+chmod 400 $testdir/file/private/sign.key.pem
 
 openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$signpwd \
     -key $testdir/file/private/sign.key.pem \
