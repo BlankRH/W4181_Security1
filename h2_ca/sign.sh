@@ -1,8 +1,8 @@
 #!/bin/bash
 
 testdir=$HOME/test
-signpwd=$1
-interpwd=$2
+#signpwd=$1
+#interpwd=$2
 
 echo hello > $testdir/file/sign.txt
 
@@ -10,7 +10,6 @@ cd $testdir/ca
 
 openssl genrsa -aes256 -passout pass:$signpwd \
     -out $testdir/file/private/sign.key.pem 4096
-chmod 400 $testdir/file/private/sign.key.pem
 
 openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$signpwd \
     -key $testdir/file/private/sign.key.pem \
@@ -18,7 +17,7 @@ openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$signpwd 
     -subj "/C=GB/ST=England/L=./O=sign/OU=certificate/CN=signature"
 
 openssl ca -config intermediate/openssl.cnf -extensions sign_cert \
-        -passin=pass:$interpwd -days 365 -notext -md sha256 \
+        -passin=pass:$interpwd -days 365 -notext -md sha256 -batch \
         -in intermediate/csr/sign.csr.pem \
         -out intermediate/certs/sign.cert.pem
 

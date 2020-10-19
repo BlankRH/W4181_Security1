@@ -16,6 +16,7 @@ clientpwd=$4
 export clientpwd
 
 signpwd=$5
+export signpwd
 
 encryptpwd=$6
 export encryptpwd
@@ -36,14 +37,20 @@ mkdir $testdir/client/certs
 cp root-config.txt $testdir/root-config.txt
 cp intermediate-config.txt $testdir/intermediate-config.txt
 
+echo root certificate
 ./rootPair.sh
 
+echo intermediate certificate
 ./interPair.sh
 
+echo server
 ./server.sh 
 
+echo client
 ./client.sh
 
-./sign.sh signpwd
+echo sign
+./sign.sh # signpwd interpwd
 
-#./encrypt.sh
+echo encrypt
+./encrypt.sh

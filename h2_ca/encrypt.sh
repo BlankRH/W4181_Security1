@@ -1,8 +1,8 @@
 #!/bin/bash
 
 testdir=$HOME/test
-encryptpwd=$1
-interpwd=$2
+#encryptpwd=$1
+#interpwd=$2
 
 cd $testdir/ca
 echo atest > $testdir/file/test.txt
@@ -11,7 +11,6 @@ filename=test.txt
 
 openssl genrsa -aes256 -passout pass:$encryptpwd \
     -out $testdir/file/private/encrypt.key.pem 4096
-chmod 400 $testdir/client/private/encrypt.key.pem
 
 openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$encryptpwd \
     -key $testdir/file/private/encrypt.key.pem \
@@ -19,7 +18,7 @@ openssl req -config intermediate/openssl.cnf -new -sha256 -passin=pass:$encryptp
     -subj "/C=GB/ST=England/L=./O=encrypt/OU=certificate/CN=encryption"
 
 openssl ca -config intermediate/openssl.cnf -extensions encrypt_cert \
-        -passin=pass:$interpwd -days 30 -notext -md sha256 \
+        -passin=pass:$interpwd -days 30 -notext -md sha256 -batch \
         -in intermediate/csr/encrypt.csr.pem \
         -out intermediate/certs/encrypt.cert.pem
 
