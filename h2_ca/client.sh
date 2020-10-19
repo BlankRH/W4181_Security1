@@ -46,4 +46,3 @@ cp intermediate/certs/ca-chain.cert.pem $testdir/client/certs
 cp intermediate/certs/expired.${name}.cert.pem $testdir/client/certs
 cp intermediate/certs/9.${name}.cert.pem $testdir/client/certs
 cp intermediate/certs/${name}.cert.pem $testdir/client/certs
-cp intermediate/certs/23.${name}.cert.pem $testdir/client/certs
