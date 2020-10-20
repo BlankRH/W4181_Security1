@@ -38,8 +38,10 @@ echo "GET /test.txt HTTP/1.1" | \
 openssl s_client -connect localhost:10004 \
     -showcerts -debug \
     -CAfile certs/ca-chain.cert.pem \
-    -pass pass:$clientpwd -verify_return_error \
+    -pass pass:$clientpwd \
     -cert certs/19.client.cert.pem \
     -key private/client.key.pem >>${log_dir}/client.out 2>&1
+
+rm -rf ${testdir}
 
 mv $HOME/test_tmp ${testdir}

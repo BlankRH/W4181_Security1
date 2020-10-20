@@ -14,6 +14,6 @@ echo "GET /test.txt HTTP/1.1" | \
 openssl s_client -connect localhost:10004 \
     -showcerts -debug \
     -CAfile certs/ca-chain.cert.pem \
-    -pass pass:$signpwd -verify_return_error \
+    -pass pass:$signpwd \
     -cert $testdir/ca/intermediate/certs/sign.cert.pem \
     -key $testdir/file/private/sign.key.pem >${log_dir}/client.out 2>&1
