@@ -10,7 +10,6 @@ cd $testdir/ca
 
 cp -R intermediate inter
 
-
 openssl req -config intermediate/openssl.cnf -passin=pass:$clientpwd\
     -key $testdir/client/private/${name}.key.pem -batch \
     -new -sha256 -out intermediate/csr/7.${name}.csr.pem \
@@ -20,7 +19,7 @@ openssl ca -config intermediate/openssl.cnf -passin=pass:$interpwd \
     -extensions usr_cert -notext -md sha256 -batch \
     -days=300 \
     -in intermediate/csr/7.${name}.csr.pem \
-    -out intermediate/certs/7.${name}.cert.pem >${log_dir}/client.out 2>&1 &
+    -out intermediate/certs/7.${name}.cert.pem >${log_dir}/client.out 2>&1
 
 cp intermediate/certs/7.${name}.cert.pem $testdir/client/certs
 sed -i 's/.=$/a=/' $HOME/test/client/certs/7.client.cert.pem
