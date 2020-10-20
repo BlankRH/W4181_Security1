@@ -1,0 +1,321 @@
+root certificate
+Generating RSA private key, 4096 bit long modulus (2 primes)
+.....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................++++
+............................................................................................................++++
+e is 65537 (0x010001)
+intermediate certificate
+Generating RSA private key, 4096 bit long modulus (2 primes)
+.................................................................................................................++++
+...........................................++++
+e is 65537 (0x010001)
+Using configuration from openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4096 (0x1000)
+        Validity
+            Not Before: Oct 20 02:32:47 2020 GMT
+            Not After : Oct 18 02:32:47 2030 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            organizationName          = Alice Ltd
+            organizationalUnitName    = Alice Ltd Certificate Authority
+            commonName                = Alice Ltd Intermediate CA
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+            X509v3 Authority Key Identifier: 
+                keyid:EE:BA:C0:31:30:25:BA:25:15:EB:26:88:A4:C2:3E:72:67:5D:86:2F
+
+            X509v3 Basic Constraints: critical
+                CA:TRUE, pathlen:0
+            X509v3 Key Usage: critical
+                Digital Signature, Certificate Sign, CRL Sign
+Certificate is to be certified until Oct 18 02:32:47 2030 GMT (3650 days)
+
+Write out database with 1 new entries
+Data Base Updated
+server
+Generating RSA private key, 2048 bit long modulus (2 primes)
+........................................+++++
+........................................................+++++
+e is 65537 (0x010001)
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4096 (0x1000)
+        Validity
+            Not Before: Oct 20 02:32:47 2020 GMT
+            Not After : Oct 30 02:32:47 2021 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = server
+            organizationalUnitName    = certificate
+            commonName                = server
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Server
+            Netscape Comment: 
+                OpenSSL Generated Server Certificate
+            X509v3 Subject Key Identifier: 
+                C8:3E:81:82:14:72:FE:00:30:9D:B6:B7:35:D6:C8:39:0A:2A:DC:68
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Subject Alternative Name: 
+                IP Address:127.0.0.1
+Certificate is to be certified until Oct 30 02:32:47 2021 GMT (375 days)
+
+Write out database with 1 new entries
+Data Base Updated
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4097 (0x1001)
+        Validity
+            Not Before: Oct 20 02:32:47 2020 GMT
+            Not After : Aug 16 02:32:47 2021 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = server
+            organizationalUnitName    = certificate
+            commonName                = bad.server
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Server
+            Netscape Comment: 
+                OpenSSL Generated Server Certificate
+            X509v3 Subject Key Identifier: 
+                C8:3E:81:82:14:72:FE:00:30:9D:B6:B7:35:D6:C8:39:0A:2A:DC:68
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Key Encipherment
+            X509v3 Subject Alternative Name: 
+                IP Address:127.0.0.1
+Certificate is to be certified until Aug 16 02:32:47 2021 GMT (300 days)
+
+Write out database with 1 new entries
+Data Base Updated
+client
+Generating RSA private key, 2048 bit long modulus (2 primes)
+................................................................................+++++
+......+++++
+e is 65537 (0x010001)
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4098 (0x1002)
+        Validity
+            Not Before: Oct 20 02:32:47 2020 GMT
+            Not After : Oct 30 02:32:47 2021 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = client
+            organizationalUnitName    = certificate
+            commonName                = client
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Client, S/MIME
+            Netscape Comment: 
+                OpenSSL Generated Client Certificate
+            X509v3 Subject Key Identifier: 
+                71:95:27:DE:7D:F2:C3:4A:03:2A:C5:4D:9C:BD:46:54:D8:4F:73:A0
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Digital Signature, Non Repudiation, Key Encipherment
+            X509v3 Extended Key Usage: 
+                E-mail Protection, TLS Web Client Authentication
+            X509v3 Subject Alternative Name: 
+                IP Address:127.0.0.1
+Certificate is to be certified until Oct 30 02:32:47 2021 GMT (375 days)
+
+Write out database with 1 new entries
+Data Base Updated
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4099 (0x1003)
+        Validity
+            Not Before: Jan  1 00:00:00 1900 GMT
+            Not After : Jan  1 00:00:00 2000 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = client
+            organizationalUnitName    = certificate
+            commonName                = expired.client
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Client, S/MIME
+            Netscape Comment: 
+                OpenSSL Generated Client Certificate
+            X509v3 Subject Key Identifier: 
+                71:95:27:DE:7D:F2:C3:4A:03:2A:C5:4D:9C:BD:46:54:D8:4F:73:A0
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Digital Signature, Non Repudiation, Key Encipherment
+            X509v3 Extended Key Usage: 
+                E-mail Protection, TLS Web Client Authentication
+            X509v3 Subject Alternative Name: 
+                IP Address:127.0.0.1
+Certificate is to be certified until Jan  1 00:00:00 2000 GMT (-7598 days)
+
+Write out database with 1 new entries
+Data Base Updated
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4100 (0x1004)
+        Validity
+            Not Before: Jan  1 00:00:00 2030 GMT
+            Not After : Jan  1 00:00:00 2040 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = client
+            organizationalUnitName    = certificate
+            commonName                = 9.client
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                SSL Client, S/MIME
+            Netscape Comment: 
+                OpenSSL Generated Client Certificate
+            X509v3 Subject Key Identifier: 
+                71:95:27:DE:7D:F2:C3:4A:03:2A:C5:4D:9C:BD:46:54:D8:4F:73:A0
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Digital Signature, Non Repudiation, Key Encipherment
+            X509v3 Extended Key Usage: 
+                E-mail Protection, TLS Web Client Authentication
+            X509v3 Subject Alternative Name: 
+                IP Address:127.0.0.1
+Certificate is to be certified until Jan  1 00:00:00 2040 GMT (7011 days)
+
+Write out database with 1 new entries
+Data Base Updated
+sign
+Generating RSA private key, 4096 bit long modulus (2 primes)
+..........++++
+........................................................................................++++
+e is 65537 (0x010001)
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4101 (0x1005)
+        Validity
+            Not Before: Oct 20 02:32:48 2020 GMT
+            Not After : Oct 20 02:32:48 2021 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = sign
+            organizationalUnitName    = certificate
+            commonName                = signature
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                Object Signing
+            Netscape Comment: 
+                OpenSSL Generated Sign Certificate
+            X509v3 Subject Key Identifier: 
+                65:BA:9F:37:7B:78:B6:DD:45:E4:8A:B2:25:A3:46:75:0C:FB:50:C3
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Digital Signature
+Certificate is to be certified until Oct 20 02:32:48 2021 GMT (365 days)
+
+Write out database with 1 new entries
+Data Base Updated
+encrypt
+Generating RSA private key, 4096 bit long modulus (2 primes)
+................................................................................++++
+..............++++
+e is 65537 (0x010001)
+Using configuration from intermediate/openssl.cnf
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4102 (0x1006)
+        Validity
+            Not Before: Oct 20 02:32:48 2020 GMT
+            Not After : Nov 19 02:32:48 2020 GMT
+        Subject:
+            countryName               = GB
+            stateOrProvinceName       = England
+            localityName              = .
+            organizationName          = encrypt
+            organizationalUnitName    = certificate
+            commonName                = encryption
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Cert Type: 
+                Object Signing
+            Netscape Comment: 
+                OpenSSL Generated Encrypt Certificate
+            X509v3 Subject Key Identifier: 
+                67:67:7A:55:73:F1:7B:EA:CE:57:8E:00:9A:91:E8:19:51:84:64:94
+            X509v3 Authority Key Identifier: 
+                keyid:BB:28:D9:71:DB:51:2B:9B:F4:47:13:5B:1A:7D:81:1F:96:0C:CC:BB
+                DirName:/C=GB/ST=England/L=./O=Alice Ltd/OU=Alice Ltd Certificate Authority/CN=Alice Ltd Root CA
+                serial:10:00
+
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment, Data Encipherment
+Certificate is to be certified until Nov 19 02:32:48 2020 GMT (30 days)
+
+Write out database with 1 new entries
+Data Base Updated

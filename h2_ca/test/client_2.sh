@@ -1,5 +1,7 @@
 #!/bin/bash
 
+log_dir=$(pwd)/../log
+
 cd $HOME/test/client
 
 
@@ -9,6 +11,6 @@ openssl s_client -connect localhost:10004 \
     -pass pass:secret4 -verify 2 \
     -cert certs/client.cert.pem \
     -showcerts -ign_eof -verify_return_error \
-    -key private/client.key.pem >$HOME/4181/h2_ca/log/client.out 2>&1 &
+    -key private/client.key.pem >${log_dir}/client.out 2>&1 &
 
 

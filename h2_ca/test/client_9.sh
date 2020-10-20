@@ -1,5 +1,7 @@
 #!/bin/bash
 
+log_dir=$(pwd)/../log
+
 cd $HOME/test/client
 
 echo "GET /test.txt HTTP/1.1" | \
@@ -8,4 +10,4 @@ openssl s_client -connect localhost:10004 \
     -CAfile certs/ca-chain.cert.pem \
     -pass pass:secret4 -verify_return_error \
     -cert certs/9.client.cert.pem \
-    -key private/client.key.pem >$HOME/4181/h2_ca/log/client.out 2>&1 &
+    -key private/client.key.pem >${log_dir}/client.out 2>&1 &

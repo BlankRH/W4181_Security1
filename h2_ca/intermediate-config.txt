@@ -121,7 +121,7 @@ nsCertType = server
 nsComment = "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer:always
-keyUsage = critical, keyEncipherment
+keyUsage = critical, keyEncipherment, digitalSignature
 subjectAltName = @alt_names
 
 [ bad_usr_cert ]
@@ -131,8 +131,8 @@ nsCertType = client, email
 nsComment = "OpenSSL Generated Client Certificate"
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid,issuer
-keyUsage = critical, nonRepudiation, keyEncipherment
-extendedKeyUsage = clientAuth, emailProtection
+keyUsage = critical, nonRepudiation, keyEncipherment, digitalSignature
+extendedKeyUsage = emailProtection
 
 [ sign_cert ]
 # Extensions for server certificates (`man x509v3_config`).

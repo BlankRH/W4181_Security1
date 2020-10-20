@@ -1,3 +1,5 @@
+I didn't set authority protection for testing purposes
+
 First run:
 
 Create certificates and run basic validation on certificates:
