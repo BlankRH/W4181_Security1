@@ -1,38 +1,62 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem>
+#include <dirent.h>
+#include <sstream>
+#include <iomanip>
+#include <cstring>
 
 using namespace std;
 
 int count_files(string path) {
-    auto dirIter = std::filesystem::directory_iterator(path);
-    int fileCount = 0;
+    DIR *dp;
+    int cnt = 0;
+    struct dirent *ep;
+    dp = opendir(path.c_str());
 
-    for (auto& entry : dirIter)
-    {
-        if (entry.is_regular_file())
-        {
-            ++fileCount;
-        }
+    if (dp != NULL) {
+        while ((ep = readdir(dp)))
+            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0)
+                cnt++;
+        closedir(dp);
+    } else {
+        exit(2);
     }
-    return fileCount;
+    return cnt;
+    
+}
+
+bool validate(string path) {
+    DIR* dir = opendir(path.c_str());
+    if (dir) {
+        closedir(dir);
+        return 1;
+    } else if (ENOENT == errno){
+        return 0;
+    } else {
+        return -1;
+    }
 }
 
 int main(int argc, char* argv[]) {
-    int a, b;
-    if (argc != 2) {
-        fprintf(stderr, "Wrong number of arguments\n");
-        return -1;
+    string rec_name (argv[1]);
+    string path ("mail/" + rec_name);
+    int ok = validate(path);
+    if (ok == 0) {
+        return 1; 
+    } else if (ok == -1) {
+        return 2;
     }
-    string rec_name (argv[0]);
-    string path ("../mail/" + rec_name);
     int num = count_files(path);
-    path += "/" + to_string(num);
+    ostringstream ss;
+    ss << setw(5) << setfill('0') << num;
+    path += "/" + ss.str();
     fstream rec_file;
-    if (rec_file.open(path, fstream::out))
+    rec_file.open(path, fstream::out);
     string buffer;
-    while(getline(cin, buffer)) {
+    while(getline (cin, buffer)) {
+        if (buffer.find(EOF) != string::npos)
+            break;
         rec_file << buffer << endl;
     }
     return 0;
