@@ -9,10 +9,9 @@
 using namespace std;
 
 int count_files(string path) {
-    DIR *dp;
+    DIR *dp = opendir(path.c_str());
     int cnt = 0;
     struct dirent *ep;
-    dp = opendir(path.c_str());
 
     if (dp != NULL) {
         while ((ep = readdir(dp)))
@@ -22,31 +21,31 @@ int count_files(string path) {
     } else {
         exit(2);
     }
-    return cnt;
+    return cnt+1;
     
 }
 
-bool validate(string path) {
-    DIR* dir = opendir(path.c_str());
-    if (dir) {
-        closedir(dir);
-        return 1;
-    } else if (ENOENT == errno){
-        return 0;
+bool validate(string rec_name) {
+    string path ("mail");
+    DIR* dp = opendir(path.c_str());
+    struct dirent *ep;
+    if (dp != NULL) {
+        while ((ep = readdir(dp)))
+            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0 && rec_name.compare(ep->d_name) == 0)
+                return 1;
     } else {
-        return -1;
+        exit(2);
     }
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
     string rec_name (argv[1]);
-    string path ("mail/" + rec_name);
-    int ok = validate(path);
+    int ok = validate(rec_name);
     if (ok == 0) {
         return 1; 
-    } else if (ok == -1) {
-        return 2;
     }
+    string path ("mail/" + rec_name);
     int num = count_files(path);
     ostringstream ss;
     ss << setw(5) << setfill('0') << num;
@@ -55,8 +54,11 @@ int main(int argc, char* argv[]) {
     rec_file.open(path, fstream::out);
     string buffer;
     while(getline (cin, buffer)) {
-        if (buffer.find(EOF) != string::npos)
+        if (buffer.find(EOF) != string::npos) {
+            buffer.pop_back();
+            rec_file << buffer;
             break;
+        }
         rec_file << buffer << endl;
     }
     return 0;

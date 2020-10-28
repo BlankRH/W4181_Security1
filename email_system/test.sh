@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./create_tree.sh test
+./create_tree.sh $1
 
 make install DEST=$1/bin
 
@@ -9,4 +9,5 @@ for i in inputs/*
 do
 	echo "test ${i}"
 	bin/mail-in <$i
+	echo 
 done

@@ -3,3 +3,28 @@ RCPT TO:<wamara>
 RCPT TO:<analects>
 jiadgflk
 .
+RCPT TO:<wamara>
+RCPT TO:<analects>
+DATA
+..
+.jiadgflk
+.
+MAIL FROM:<wamara>
+RCPT TO:<wamara>
+MAIL FROM:<wamara>
+RCPT TO:<analects>
+DATA
+..
+.jiadgflk
+.
+MAIL FROM:<wamara>
+RCPT TO:<wamara>
+MAIL FROM:<wamara>
+RCPT TO:<analects>
+.
+MAIL FROM:<wamara>
+RCPT TO:<wamara>
+MAIL FROM:<wamara>
+RCPT TO:<analects>
+
+.

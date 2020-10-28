@@ -1,0 +1,22 @@
+mail From:<corector>
+dAtA
+.Hello World
+..HelloWorld
+.
+DATA
+Hello World!
+..Hello World Again!
+.
+MAIL FROM:<reinsure>
+RCPT TO:<scerne>
+RCPT TO:<starshine>
+DATA
+Hello World!
+..Hello World Again!
+MAIL FROM:<reinsure>
+RCPT TO:<scerne>
+RCPT TO:<starshine>
+DATA
+Hello World!
+..Hello World Again!
+.

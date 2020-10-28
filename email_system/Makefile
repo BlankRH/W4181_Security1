@@ -11,4 +11,4 @@ install: mail-in mail-out
 
 .PHONY:clean
 clean:
-	rm -rf mail-in mail-out test
+	rm -rf mail-in mail-out test out

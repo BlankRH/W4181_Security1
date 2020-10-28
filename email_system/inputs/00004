@@ -1,19 +1,18 @@
 MAIL FROM:<wamara>
 RCPT TO:<wamara>
 RCPT TO:<analects>
-DATA
+data
 jiadgflk
 .
 MAIL FROM:<wamara>
-RCPT TO:<wamara>
+RcPT TO:<wamara>
 RCPT TO:<analects>
 DATA
-..
-RCPT TO:<addleness>
-.jiadgflk
+jiadgflk
 .
-MAIL FROM:<wamara>
+MAIL FroM:<wamara>
 RCPT TO:<wamara>
 RCPT TO:<analects>
 DATA
+jiadgflk
 .

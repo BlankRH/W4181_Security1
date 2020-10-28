@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <fstream>
 #include <sys/wait.h>
+#include <cctype>
+#include <set>
 #include <dirent.h>
 
 using namespace std;
@@ -18,21 +20,22 @@ void split() {
     int step = 0;
     string sender;
     string rcpt_line;
-    vector<string> receivers;
+    set<string> receivers;
     string message;
     while (getline (cin, buf)) {
         if (buf.compare(".") == 0) {
             if(step == -1) {
-                fprintf(stderr, "Err: Aborted Mail\n");
+                fprintf(stderr, "Aborted Mail\n");
             } else if (step == 1) {
-                fprintf(stderr, "Err: No RCPT TO\n");
+                fprintf(stderr, "Err: No RCPT TO or No DATA\n");
             } else if (step == 0) {
-                fprintf(stderr, "Err: No MAIL FROM\n");
+                fprintf(stderr, "Err: No MAIL FROM; Reaching end\n");
             } else {
+                message.pop_back();
                 message += EOF;
                 message += '\n';
-                for(unsigned int i=0; i<receivers.size(); i++) {
-                    string rec (receivers[i]);
+                for(auto it=receivers.begin(); it != receivers.end(); it++) {
+                    string rec (*it);
                     invoke(rec, message);
                 }
             }
@@ -44,21 +47,28 @@ void split() {
         if (step == -1) {
             continue;
         }
+        if (message.size() > 1024 * 1024 * 1024) {
+            fprintf(stderr, "Err: Message Too Long\n");
+            step = -1;
+            continue;
+        }
         if (buf.compare(0, 1, ".") == 0) {
             buf.erase(0,1);
         }
         if (step == 0) {
-            if (buf.compare(0, 10, "MAIL FROM:") != 0) {
-                fprintf(stderr, "Err: No MAIL FROM\n");
+            string cmpbuf (buf);
+            transform(cmpbuf.begin(), cmpbuf.end(), cmpbuf.begin(), ::tolower);
+            if (cmpbuf.compare(0, 10, "mail from:") != 0) {
+                fprintf(stderr, "Err: No MAIL FROM; Jumping to end\n");
                 step = -1;
             } else if (buf.compare(10, 1, "<") != 0 || buf.find_last_of(">") != buf.find_last_not_of(whitespaces)){
-                fprintf(stderr, "Err: Incorrect angle brackets\n");
+                fprintf(stderr, "Err: Incorrect angle brackets; Jumping to end\n");
                 step = -1;
             } else {
                 string username = buf.substr(11, buf.find_last_of(">")-11);
                 bool nameOK = validate(username);
                 if (!nameOK) {
-                    fprintf(stderr, "Err: Bad Sender Username %s\n", username.c_str());
+                    fprintf(stderr, "Err: Bad Sender Username %s; Jumping to end\n", username.c_str());
                     step = -1;
                 } else {
                     sender = "From: " + username;
@@ -66,26 +76,41 @@ void split() {
                 }
             }
         } else if (step == 1) {
-            if (buf.compare(0, 8, "RCPT TO:") != 0 && receivers.size() == 0) {
-                fprintf(stderr, "Err: No RCPT TO\n");
+            string cmpbuf (buf);
+            transform(cmpbuf.begin(), cmpbuf.end(), cmpbuf.begin(), ::tolower);
+            if (cmpbuf.compare(0, 8, "rcpt to:") != 0 && receivers.empty()) {
+                fprintf(stderr, "Err: No RCPT TO; Jumping to end\n");
                 step = -1;
-            } else if (buf.compare(0, 8, "RCPT TO:") == 0) {
+            } else if (cmpbuf.compare(0, 8, "rcpt to:") == 0) {
                 if (buf.compare(8, 1, "<") != 0 || buf.find_last_of(">") != buf.find_last_not_of(whitespaces)){
                     fprintf(stderr, "Err: Incorrect angle brackets\n");
+                    continue;
                 } 
                 string username = buf.substr(9, buf.find_last_of(">")-9);
-                receivers.push_back(username);
-            } else if (buf.compare("DATA") == 0) {
+                receivers.insert(username);
+            } else if (cmpbuf.compare("data") == 0) {
                 rcpt_line = "    To: ";
-                for (unsigned int i=0; i<receivers.size()-1; i++)
-                    rcpt_line += receivers[i] + ", ";
-                rcpt_line += receivers[receivers.size()-1];
+                for(auto it=receivers.begin(); it != receivers.end(); it++) {
+                    rcpt_line += *it + ", ";
+                    if (rcpt_line.size() > 1024 * 1024 * 1024) {
+                        fprintf(stderr, "Err: Message Too Long\n");
+                        step = -1;
+                        break;
+                    }
+                }
+                if (step == -1) {
+                    continue;
+                }
+                if (receivers.size() > 0) {
+                    rcpt_line.pop_back();
+                    rcpt_line.pop_back();
+                }
                 message = sender + "\n" + rcpt_line + "\n" + "\n";
                 sender.clear();
                 rcpt_line.clear();
                 step++;
             } else {
-                fprintf(stderr, "Err: Invalid Control Line\n");
+                fprintf(stderr, "Err: Invalid Control Line; Jumping to end\n");
                 step = -1;
             }
         } else if (step == 2) {
@@ -96,17 +121,17 @@ void split() {
 }
 
 bool validate(string username) {
-    string path ("./mail/"+username);
-    DIR* dir = opendir(path.c_str());
-    // DIR* dir = opendir("mail/wamara");
-    if (dir) {
-        closedir(dir);
-        return 1;
-    } else if (ENOENT == errno){
-        return 0;
+    string path ("mail");
+    DIR* dp = opendir(path.c_str());
+    struct dirent *ep;
+    if (dp != NULL) {
+        while ((ep = readdir(dp)))
+            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0 && username.compare(ep->d_name) == 0)
+                return 1;
     } else {
-        return 1;
+        exit(2);
     }
+    return 0;
 }
 
 
