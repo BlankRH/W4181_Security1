@@ -31,7 +31,6 @@ void split() {
             } else if (step == 0) {
                 fprintf(stderr, "Err: No MAIL FROM; Reaching end\n");
             } else {
-                message.pop_back();
                 message += EOF;
                 message += '\n';
                 for(auto it=receivers.begin(); it != receivers.end(); it++) {
@@ -126,11 +125,14 @@ bool validate(string username) {
     struct dirent *ep;
     if (dp != NULL) {
         while ((ep = readdir(dp)))
-            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0 && username.compare(ep->d_name) == 0)
+            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0 && username.compare(ep->d_name) == 0) {
+                closedir(dp);
                 return 1;
+            }
     } else {
         exit(2);
     }
+    closedir(dp);
     return 0;
 }
 

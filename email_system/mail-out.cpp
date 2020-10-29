@@ -31,11 +31,14 @@ bool validate(string rec_name) {
     struct dirent *ep;
     if (dp != NULL) {
         while ((ep = readdir(dp)))
-            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0 && rec_name.compare(ep->d_name) == 0)
+            if (strncmp(ep->d_name, ".", 1) != 0 && strncmp(ep->d_name, "..", 2) != 0 && rec_name.compare(ep->d_name) == 0) {
+                closedir(dp);
                 return 1;
+            }
     } else {
         exit(2);
     }
+    closedir(dp);
     return 0;
 }
 
@@ -55,8 +58,6 @@ int main(int argc, char* argv[]) {
     string buffer;
     while(getline (cin, buffer)) {
         if (buffer.find(EOF) != string::npos) {
-            buffer.pop_back();
-            rec_file << buffer;
             break;
         }
         rec_file << buffer << endl;
