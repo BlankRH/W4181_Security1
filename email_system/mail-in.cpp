@@ -116,6 +116,10 @@ void split() {
             message += buf + "\n";
         }
     }
+    if (message.length() > 0) {
+        fprintf(stderr, "Err: Missing End of Message");
+        exit(1);
+    }
 
 }
 
