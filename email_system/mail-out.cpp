@@ -56,11 +56,10 @@ int main(int argc, char* argv[]) {
     fstream rec_file;
     rec_file.open(path, fstream::out);
     string buffer;
+    int cnt = 0;
     while(getline (cin, buffer)) {
-        if (buffer.find(EOF) != string::npos) {
-            break;
-        }
         rec_file << buffer << endl;
     }
+    rec_file.close();
     return 0;
 }
