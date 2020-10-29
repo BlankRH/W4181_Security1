@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./g.sh
+
 rm -rf "$1"
 
 mkdir "$1"
