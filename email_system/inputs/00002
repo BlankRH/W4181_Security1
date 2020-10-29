@@ -16,9 +16,3 @@ RCPT TO:<analejhcts>
 DATA
 jiadgflk
 .
-MAIL FROM:<analects>
-RCPT TO:<wamara>
-RCPT TO:<analects\n>
-DATA
-jiadgflk
-.
