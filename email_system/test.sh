@@ -13,3 +13,5 @@ if [ ! -d "$1" ]; then
 fi
 
 ./inputtest.sh $1
+
+./mailbox_clean.sh >/dev/null 2>&1

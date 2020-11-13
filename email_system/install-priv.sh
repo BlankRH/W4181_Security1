@@ -10,10 +10,8 @@ if [ ! -d "$1" ]; then
   exit 1
 fi
 
-if [ ! -d "/home/exeUser" ]; then
-	groupadd exeUser
-	useradd -m -d /home/mailbox/exeUser -g exeUser exeUser
-fi
+groupadd exeUser
+useradd -m -d /home/mailbox/exeUser -g exeUser exeUser
 
 chown -R exeUser:exeUser $1
 setfacl -m m::r-- $1

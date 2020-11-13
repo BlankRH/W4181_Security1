@@ -1,8 +1,6 @@
 #!/bin/bash
 
-if [ ! -d "/home/mailbox" ]; then
-  sudo ./mailbox_gen.sh
-fi
+sudo ./mailbox_gen.sh >/dev/null 2>&1
 
 if [ "$#" -ne 1 ]; then
   echo "Usage: $0 DIRECTORY" >&2
