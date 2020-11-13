@@ -1,13 +1,15 @@
 #!/bin/bash
 
-./create_tree.sh $1
+sudo make clean
 
-make install DEST=$1/bin
+make install
 
-cd $1
-for i in inputs/*
-do
-	echo "test ${i}"
-	bin/mail-in <$i
-	echo 
-done
+./install-unpiv.sh $1
+sudo ./install-priv.sh $1
+
+if [ ! -d "$1" ]; then
+  echo "$1 Does Not Exist."
+  exit 1
+fi
+
+./inputtest.sh $1

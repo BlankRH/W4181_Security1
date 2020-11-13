@@ -63,10 +63,14 @@ void invoke(string rec) {
         close(fd[1]);
         file.close();
         p = wait(&status);
-        if (WEXITSTATUS(status) == 1)
+        if (WEXITSTATUS(status) == 0) 
+            return;
+        else if (WEXITSTATUS(status) == 1)
             fprintf(stderr, "Err: Invalid Receiver %s\n", rec.c_str());
         else if (WEXITSTATUS(status) == 2)
-            fprintf(stderr, "Err: System Func Err\n");
+            fprintf(stderr, "Err: Permission Denied\n");
+        else 
+            fprintf(stderr, "Err: System Function Error\n");
     }
 
 }
@@ -96,9 +100,9 @@ int main() {
                 for(auto it=receivers.begin(); it != receivers.end(); it++) {
                     string rec (*it);
                     invoke(rec);
-                }
-                
+                }  
             }
+            remove("tmp/tmp");
             tmp_file.close();
             receivers.clear();
             step = 0;
