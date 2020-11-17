@@ -25,7 +25,7 @@ mailclean:
 .PHONY: install
 install: mail-in mail-out
 	mkdir $(TREE)
-	./install-unpriv
+	./install-unpriv.sh $(TREE)
 	cp mail-in mail-out $(TREE)/bin
-	./install-priv
+	sudo ./install-priv.sh $(TREE)
 
