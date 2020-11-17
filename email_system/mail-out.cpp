@@ -32,6 +32,10 @@ int count_files(string path) {
 }
 
 bool validate(string rec_name) {
+    for (string::iterator it=rec_name.begin(); it != rec_name.end(); it++) {
+        if (*it - '0' < 32 || *it - '0' > 126)
+            return 0;
+    }
     string path ("mail");
     char buf[1024];
     DIR* dp = opendir(path.c_str());

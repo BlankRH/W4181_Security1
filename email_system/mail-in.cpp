@@ -13,6 +13,10 @@ using namespace std;
 string whitespaces(" \t\f\v\n\r");
 
 int validate(string username) {
+    for (string::iterator it=username.begin(); it != username.end(); it++) {
+        if (*it - '0' < 32 || *it - '0' > 126)
+            return 0;
+    }
     string path ("mail");
     DIR* dp = opendir(path.c_str());
     struct dirent *ep;
@@ -37,13 +41,13 @@ void invoke(string rec) {
     
     if (pipe(fd) == -1) {
         fprintf(stderr, "Pipe Failed\n");
-        return ;
+        exit(1);
     }
 
     p = fork();
     if (p < 0) {
         fprintf(stderr, "Fork Failed\n");
-        return;
+        exit(1);
     } else if (p == 0) {
         // Child process
         close(fd[1]);  // Close the writing end of the pipe
@@ -68,7 +72,7 @@ void invoke(string rec) {
         else if (WEXITSTATUS(status) == 1)
             fprintf(stderr, "Err: Invalid Receiver %s\n", rec.c_str());
         else if (WEXITSTATUS(status) == 2)
-            fprintf(stderr, "Err: Permission Denied\n");
+            fprintf(stderr, "Err: mail-out Permission Denied\n");
         else 
             fprintf(stderr, "Err: System Function Error\n");
     }
@@ -102,7 +106,6 @@ int main() {
                     invoke(rec);
                 }  
             }
-            remove("tmp/tmp");
             tmp_file.close();
             receivers.clear();
             step = 0;
@@ -135,7 +138,7 @@ int main() {
                     tmp_file << "From: " << username << endl;
                     step++;
                 } else {
-                    fprintf(stderr, "Err: Can't open mail directory\n");
+                    fprintf(stderr, "Err: mail-in Can't open mail directory\n");
                     tmp_file.close();
                     return 1;
                 }
@@ -173,6 +176,7 @@ int main() {
     }
     receivers.clear();
     buf.clear();
+    remove("tmp/tmp");
     tmp_file.close();
     if (step != 0) {
         fprintf(stderr, "Err: Missing End of Message\n");

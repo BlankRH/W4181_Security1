@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo make clean
+# sudo make clean
 
 make install
 
@@ -12,6 +12,6 @@ if [ ! -d "$1" ]; then
   exit 1
 fi
 
-./inputtest.sh $1
+ ./inputtest.sh $1
 
-./mailbox_clean.sh >/dev/null 2>&1
+# sudo ./mailbox_clean.sh >/dev/null 2>&1
