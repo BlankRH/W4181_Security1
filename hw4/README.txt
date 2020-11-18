@@ -54,10 +54,13 @@ inUser: user with all permissions that mail-in should have, including executing 
 outUser: user with all permissions that mail-out should have, including reading tmp file, getting names of mailboxs and writing to mailboxs
 (Should not log in as the above 2 users)
 
-Any user can execute mail-in
+Any user can execute mail-in, only mail-in can invoke mail-out
+Every receiver user have r-x access to their mailbox directory and rwx access to their mail files
 
 setup with
 make install TREE=<testdir>
 
 clean all test users with
 sudo ./mailbox_clean.sh
+
+When creating mailbox with sudo, please add correct permissions corresponding to the user

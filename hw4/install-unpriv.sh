@@ -6,15 +6,14 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
-mkdir "$1"
 
 mkdir $1/bin $1/mail $1/tmp
 
-directories=`find /home/mailbox -maxdepth 1 -mindepth 1 -type d | sed 's/\/home\/mailbox\///1'`
+input=("addleness" "analects" "annalistic" "anthropomorphologically" "blepharosphincterectomy" "corector" "durwaun" "dysphasia" "encampment" "endoscopic" "exilic" "forfend" "gorbellied" "gushiness" "muermo" "neckar" "outmate" "outroll" "overrich" "philosophicotheological" "pockwood" "polypose" "refluxed" "reinsure" "repine" "scerne" "starshine" "unauthoritativeness" "unminced" "unrosed" "untranquil" "urushinic" "vegetocarbonaceous" "wamara" "whaledom")
 
-for name in $directories
+for i in ${input[@]}
 do
-   mkdir $1/mail/$name
+   mkdir $1/mail/$i
 done
 
 mkdir $1/mail/$USER

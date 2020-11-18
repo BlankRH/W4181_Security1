@@ -61,6 +61,8 @@ done
 setfacl -m u:inUser:r-x $1/mail
 setfacl -m u:outUser:r-x $1/mail
 setfacl -Rm o::--- $1/mail
-setfacl -m o::--x $1/mail
+setfacl -m o::r-x $1/mail
+
+setfacl -dm u:outUser:rwx $1/mail
 
 setfacl -m o::--x $1
